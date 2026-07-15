@@ -66,3 +66,14 @@ class SituationService(BaseServices):
                  .where(ModelSituation.situation == situation))
         
         return list(query)
+    
+    def set_relation_to_model(self,modelName:str,situationName:str):
+        try:
+            model_situation = ModelSituation.create(model=modelName,situation=situationName)
+            logger.info(f"Realtion Model: {modelName} - Situation: {situationName} created")
+
+            return model_situation
+        
+        except IntegrityError as e:
+            logger.error(f"Error when creating Realtion Model: {modelName} - Situation: {situationName}: {e}")
+            raise ValueError(f"A Realtion Model: {modelName} - Situation: {situationName} cant be created")

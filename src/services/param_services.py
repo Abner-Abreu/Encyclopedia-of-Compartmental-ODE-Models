@@ -66,3 +66,18 @@ class ParamService(BaseServices):
                  .where(ModelParam.param == param))
         
         return list(query)
+    
+    def set_relation_to_model(self,modelName:str,paramName:str,lineal:bool,meaning:str,symbol:str):
+        try:
+            model_param = ModelParam.create(model=modelName,
+                                            param=paramName,
+                                            lineal=lineal,
+                                            meaning=meaning,
+                                            symbol=symbol)
+            logger.info(f"Realtion Model: {modelName} - Param: {paramName} created")
+
+            return model_param
+        
+        except IntegrityError as e:
+            logger.error(f"Error when creating Realtion Model: {modelName} - Param: {paramName}: {e}")
+            raise ValueError(f"A Realtion Model: {modelName} - Param: {paramName} cant be created")

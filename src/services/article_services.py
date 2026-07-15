@@ -66,3 +66,14 @@ class ArticleService(BaseServices):
                  .where(ModelArticle.article == article))
         
         return list(query)
+
+    def set_relation_to_model(self,modelName:str,articleName:str):
+        try:
+            model_article = ModelArticle.create(model=modelName,article=articleName)
+            logger.info(f"Realtion Model: {modelName} - Article: {articleName} created")
+
+            return model_article
+        
+        except IntegrityError as e:
+            logger.error(f"Error when creating Realtion Model: {modelName} - Article: {articleName}: {e}")
+            raise ValueError(f"A Realtion Model: {modelName} - Article: {articleName} cant be created")

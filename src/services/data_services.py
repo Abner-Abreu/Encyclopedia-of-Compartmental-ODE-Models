@@ -66,3 +66,14 @@ class DataService(BaseServices):
                  .where(ModelData.data == data))
         
         return list(query)
+    
+    def set_relation_to_model(self,modelName:str,dataName:str):
+        try:
+            model_data = ModelData.create(model=modelName,data=dataName)
+            logger.info(f"Realtion Model: {modelName} - Data: {dataName} created")
+
+            return model_data
+        
+        except IntegrityError as e:
+            logger.error(f"Error when creating Realtion Model: {modelName} - Data: {dataName}: {e}")
+            raise ValueError(f"A Realtion Model: {modelName} - Data: {dataName} cant be created")
