@@ -70,10 +70,9 @@ class ModelService(BaseServices):
                 ModelData.model == model
             ).execute()
             
-            # Eliminar el modelo
             model.delete_instance()
         
-        logger.info(f"Modelo eliminado: {name}")
+        logger.info(f"Model deleted: {name}")
         return True
     
     def get_compartments(self,name:str) -> List[Dict[str, Any]]:
