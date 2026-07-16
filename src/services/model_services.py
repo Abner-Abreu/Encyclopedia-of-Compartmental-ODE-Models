@@ -1,4 +1,4 @@
-from peewee import DoesNotExist, IntegrityError
+from peewee import DoesNotExist, IntegrityError, fn
 from database import (Model,Compartment, Param,Situation,Data,Article,
                       ModelArticle,ModelCompartment,ModelData,ModelParam,ModelSituation,
                       db)
@@ -33,15 +33,23 @@ class ModelService(BaseServices):
         query = Model.select()
 
         if filters:
-            for field,value in filter:
-                if field == 'name__contains':
-                    query = query.where(Model.name.contains(value))
-                elif field == 'name__startswith':
-                    query = query.where(Model.name.startswith(value))
-                elif field == 'all__lineal':
-                    query = query #not implemented
-                elif field == 'all__nonlineal':
-                    query = query #not implemented
+            if filters['name__contains']:
+                query = query.where(Model.name.contains(filters['name__contains']))
+            if filters['parameter__contains']:
+                query = query.where(Param.name.contains(filters['parameter__contains']))
+            if filters['compartment__contains']:
+                query = query.where(Compartment.name.contains(filters['compartment__contains']))
+            if filters['situation__contains']:
+                query = query.where(Situation.name.contains(filters['situation__contains']))
+            if filters['article__contains']:
+                query = query.where(Article.name.contains(filters['article__contains']))
+            if filters['all__linear']:
+                query = query.where(~fn.EXISTS(
+                                            ModelParam
+                                            .select()
+                                            .where((ModelParam.model == Model.name) & 
+                                            (ModelParam.lineal == False))
+                                    ))
 
         query = query.order_by(Model.name.asc())
         
