@@ -11,13 +11,13 @@ from datetime import date
 
 class ServiceHandler:
     def __init__(self):
-        self.article = ArticleService
-        self.data = DataService
-        self.model = ModelService
-        self.param = ParamService
-        self.situation = SituationService
-        self.validation = ValidationService
-        self.compartment = CompartmentService
+        self.article = ArticleService()
+        self.data = DataService()
+        self.model = ModelService()
+        self.param = ParamService()
+        self.situation = SituationService()
+        self.validation = ValidationService()
+        self.compartment = CompartmentService()
 
     def create_complete(self,
                         name:str,
