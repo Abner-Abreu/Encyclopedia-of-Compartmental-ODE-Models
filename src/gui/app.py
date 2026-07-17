@@ -6,13 +6,13 @@ from gui.styles import COLORS, FONTS, SIZES
 from gui.views.model_view import ModelsView
 
 class App:
-    def __init__(self, root, model_service):
+    def __init__(self, root, service):
         self.root = root
         self.root.title("Encyclopedia of Compartmental ODE Models")
         self.root.geometry(f"{SIZES['window_width']}x{SIZES['window_height']}")
         self.root.configure(bg=COLORS['background'])
         
-        self.model_service = model_service
+        self.service = service
         
         self._create_widgets()
         self._show_initial_view()
@@ -31,7 +31,7 @@ class App:
         
         if view_id == 'models':
             if 'models' not in self.views:
-                self.views['models'] = ModelsView(self.content_frame, self.model_service)
+                self.views['models'] = ModelsView(self.content_frame, self.service)
             else:
                 self.views['models']._load_all_models()
                 self.views['models'].frame.pack(fill='both', expand=True)

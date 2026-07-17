@@ -8,13 +8,13 @@ from gui.components.table import DataTable
 from gui.components.model_filters import ModelFilters
 from gui.dialogs.model_helper_dialog import ModelHelperDialog
 
-from services import ModelService
+from services import ServiceHandler
 from database import Model
 
 class ModelsView:
-    def __init__(self, master, model_service: ModelService):
+    def __init__(self, master, service: ServiceHandler):
         self.master = master
-        self.model_service = model_service
+        self.service = service
         self.all_models = []
         self._create_widgets()
         self._load_all_models()
@@ -69,7 +69,7 @@ class ModelsView:
     
     def _load_all_models(self):
         try:
-            models = self.model_service.to_list()
+            models = self.service.model.to_list()
             self.all_models = models
             self._display_models(models)
             self.label_counter.config(text=f"📊 Showing {len(self.all_models)} models")
@@ -82,17 +82,17 @@ class ModelsView:
         data = []
         for m in models:
             try:
-                situation = self.model_service.get_situation(m.name)['name']
+                situation = self.service.model.get_situation(m.name)['name']
             except:
                 situation = "Not found"
 
             try:
-                article = self.model_service.get_article(m.name)['name']
+                article = self.service.model.get_article(m.name)['name']
             except:
                 article = "Not found"
             
             try:
-                params = self.model_service.get_params(m.name)
+                params = self.service.model.get_params(m.name)
                 all_lineal = "Yes"
                 for param in params:
                     if param['lineal'] == False:
@@ -103,14 +103,14 @@ class ModelsView:
         self.table.load_data(data)
     
     def _apply_filters(self, filters: Dict[str, Any]):
-        filtered_models = self.model_service.to_list(filters=filters)
+        filtered_models = self.service.model.to_list(filters=filters)
         self._display_models(filtered_models)
         self.label_counter.config(
             text=f"Showing {len(filtered_models)} of {len(self.all_models)} models"
         )
     
     def _open_create_dialog(self):
-        dialog = ModelHelperDialog(self.master, self.model_service)
+        dialog = ModelHelperDialog(self.master, self.service)
         if dialog.result:
             messagebox.showinfo("Success", f"Model '{dialog.result}' created successfully")
         self._load_all_models()
@@ -124,7 +124,7 @@ class ModelsView:
         if not messagebox.askyesno("Confirm Deletion", f"Delete model '{name}'?"):
             return
         try:
-            self.model_service.delete(name)
+            self.service.model.delete(name)
             self._load_all_models()
             messagebox.showinfo("Success", f"Model '{name}' deleted")
         except Exception as e:
@@ -137,8 +137,7 @@ class ModelsView:
             return
         name = selected[0]
         try:
-            model = self.model_service.get_by_id(name)
-            model_info = self.model_service.get_all(name)
+            model_info = self.service.model.get_all(name)
 
             details = f"Model: {model_info['name']} \n\n"
             details += "Compartments: \n"
