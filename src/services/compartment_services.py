@@ -1,6 +1,13 @@
 from peewee import DoesNotExist, IntegrityError
-from database import Model,Compartment,ModelCompartment,db
-from typing import List,Optional,Dict,Any
+
+from database import (Model,
+                      Compartment,
+                      ModelCompartment,
+                      db)
+
+from dtos import (CompartmentDto,
+                  ModelDto)
+
 import logging
 
 from .base_services import BaseServices
@@ -26,20 +33,17 @@ class CompartmentService(BaseServices):
             logger.warning(f"Compartment {name} not finded")
             raise ValueError(f"Compartment {name} not finded")
         
-    def to_list(self,filters: Optional[Dict[str,Any]] = None) -> List[Compartment]:
+    def to_list(self) -> list[CompartmentDto]:
 
         query = Compartment.select()
-
-        if filters:
-            for field,value in filter:
-                if field == 'name__contains':
-                    query = query.where(Compartment.name.contains(value))
-                elif field == 'name__startswith':
-                    query = query.where(Compartment.name.startswith(value))
-
         query = query.order_by(Compartment.name.asc())
         
-        return list(query)
+        result = list()
+        for res in query:
+            result.append(CompartmentDto(name=res.name,
+                                         expression=res.expression))
+            
+        return result
     
     def update(self):
         return
@@ -57,7 +61,7 @@ class CompartmentService(BaseServices):
         logger.info(f"Compartment deleted: {name}")
         return True
     
-    def get_models(self,name:str) -> List[Model]:
+    def get_models(self,name:str) -> list[ModelDto]:
         compartment = self.get_by_id(name)
 
         query = (ModelCompartment
@@ -65,7 +69,9 @@ class CompartmentService(BaseServices):
                  .join(Model)
                  .where(ModelCompartment.compartment == compartment))
         
-        return list(query)
+        return [{
+            ModelDto(name=rel.model.name)
+        }for rel in query]
     
     def set_relation_to_model(self,modelName:str,compartmentName:str):
         try:
