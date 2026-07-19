@@ -76,13 +76,13 @@ class ParamService(BaseServices):
     def set_relation_to_model(self,
                               modelName:str,
                               paramName:str,
-                              lineal:bool,
+                              linear:bool,
                               meaning:str,
                               symbol:str):
         try:
             model_param = ModelParam.create(model=modelName,
                                             param=paramName,
-                                            lineal=lineal,
+                                            linear=linear,
                                             meaning=meaning,
                                             symbol=symbol)
             logger.info(f"Realtion Model: {modelName} - Param: {paramName} created")
