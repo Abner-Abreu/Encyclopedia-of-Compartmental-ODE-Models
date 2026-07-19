@@ -1,7 +1,5 @@
-# gui/views/models_view.py
 import tkinter as tk
 from tkinter import messagebox
-from typing import List, Dict, Any
 
 from gui.styles import COLORS, FONTS, SIZES
 from gui.components.table import DataTable
@@ -9,7 +7,8 @@ from gui.components.model_filters import ModelFilters
 from gui.dialogs.model_helper_dialog import ModelHelperDialog
 
 from services import ServiceHandler
-from database import Model
+from dtos import (ModelDto,
+                  FiltersDto)
 
 class ModelsView:
     def __init__(self, master, service: ServiceHandler):
@@ -78,31 +77,30 @@ class ModelsView:
             self.all_models = []
             self.table.load_data([])
     
-    def _display_models(self, models: List[Model]):
+    def _display_models(self, models: list[ModelDto]):
         data = []
         for m in models:
             try:
-                situation = self.service.model.get_situation(m.name)['name']
+                situation = self.service.model.get_situation(m.name)[0].name
             except:
                 situation = "Not found"
-
             try:
-                article = self.service.model.get_article(m.name)['name']
+                article = self.service.model.get_article(m.name)[0].name
             except:
                 article = "Not found"
-            
             try:
                 params = self.service.model.get_params(m.name)
                 all_lineal = "Yes"
                 for param in params:
-                    if param['lineal'] == False:
+                    if param.linear == False:
                         all_lineal = "NO"
             except:
                 all_lineal = "Not found"
+                
             data.append([m.name, situation, article, all_lineal])
         self.table.load_data(data)
     
-    def _apply_filters(self, filters: Dict[str, Any]):
+    def _apply_filters(self, filters: FiltersDto | None):
         filtered_models = self.service.model.to_list(filters=filters)
         self._display_models(filtered_models)
         self.label_counter.config(
@@ -115,7 +113,7 @@ class ModelsView:
             messagebox.showinfo("Success", f"Model '{dialog.result}' created successfully")
         self._load_all_models()
     
-    def _delete_model(self, *args):
+    def _delete_model(self):
         selected = self.table.get_selected()
         if not selected:
             messagebox.showwarning("Warning", "Please select a model to delete")
@@ -137,47 +135,51 @@ class ModelsView:
             return
         name = selected[0]
         try:
+            
             model_info = self.service.model.get_all(name)
-
-            details = f"Model: {model_info['name']} \n\n"
+            
+            details = f"Model: {model_info.name} \n\n"
             details += "Compartments: \n"
-            for compartment in model_info['compartments']:
-                details += f"   Name: {compartment['name']} \n"
-                details += f"   Expression: {compartment['expression']} \n"
+            for compartment in model_info.compartments:
+                details += f"   Name: {compartment.name} \n"
+                details += f"   Expression: {compartment.expression} \n"
             details += "\n\n"
 
             details += "Params: \n"
-            for params in model_info['params']:
-                details += f"   Name: {params['name']}"
+            for params in model_info.params:
+                details += f"   Name: {params.name}"
                 linear = "NO"
-                if params['name']:
+                if params.linear:
                     linear = "YES"
                 details += f"   Linear: {linear} \n"   
-                details += f"   Symbol: {params['symbol']} \n"
-                details += f"   Meaning: {params['meaning']} \n"
+                details += f"   Symbol: {params.symbol} \n"
+                details += f"   Meaning: {params.meaning} \n"
             details += "\n\n"
 
             details += "Situation:\n"
-            for situation in model_info['situation']:
-                details += f"   Name: {situation['name']}\n"
-                details += f"   Description: {situation['description']}\n"
+            if model_info.situation:
+                details += f"   Name: {model_info.situation.name}\n"
+                details += f"   Description: {model_info.situation.description}\n"
+            else:
+                details += "   Not found"
             details += "\n\n"
 
             details += "Article:\n"
-            for article in model_info['article']:
-                details += f"    Name: {article['name']} \n"  
-                details += f"    Author: {article['author']} \n"   
-                details += f"    Date: {article['date']} \n" 
-            details += "\n\n"
-
-            details += "Data:\n"
-            if model_info['data']:
-                for data in model_info['data']:
-                    details += f"    Name: {data['name']} \n"     
-                    details += f"    Date: {data['date']} \n"
-                    details += f"    Place: {data['place']} \n" 
+            if model_info.article:
+                details += f"    Name: {model_info.article.name} \n"  
+                details += f"    Author: {model_info.article.author} \n"   
+                details += f"    Date: {model_info.article.date} \n" 
             else:
-                details += "No data"
+                details += "   Not found"
+            details += "\n\n"
+        
+            details += "Data:\n"
+            if model_info.data:
+                details += f"    Name: {model_info.data.name} \n"     
+                details += f"    Date: {model_info.data.date} \n"
+                details += f"    Place: {model_info.data.place} \n" 
+            else:
+                details += "    No data"
 
             messagebox.showinfo(f"Details: {name}", details)
         except Exception as e:
