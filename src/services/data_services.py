@@ -1,6 +1,13 @@
 from peewee import DoesNotExist, IntegrityError
-from database import Model,Data,ModelData,db
-from typing import List,Optional,Dict,Any
+
+from database import (Model,
+                      Data,
+                      ModelData,
+                      db)
+
+from dtos import (DataDto,
+                  ModelDto)
+
 import logging
 
 from .base_services import BaseServices
@@ -26,20 +33,18 @@ class DataService(BaseServices):
             logger.warning(f"Data {name} not finded")
             raise ValueError(f"Data {name} not finded")
         
-    def to_list(self,filters: Optional[Dict[str,Any]] = None) -> List[Data]:
+    def to_list(self) -> list[DataDto]:
 
         query = Data.select()
-
-        if filters:
-            for field,value in filter:
-                if field == 'name__contains':
-                    query = query.where(Data.name.contains(value))
-                elif field == 'name__startswith':
-                    query = query.where(Data.name.startswith(value))
-
         query = query.order_by(Data.name.asc())
         
-        return list(query)
+        result = list()
+        for res in query:
+            result.append(DataDto(name=res.name,
+                                  date=res.date,
+                                  place=res.place))
+            
+        return result
     
     def update(self):
         return
@@ -57,7 +62,7 @@ class DataService(BaseServices):
         logger.info(f"Data deleted: {name}")
         return True
     
-    def get_models(self,name:str) -> List[Model]:
+    def get_models(self,name:str) -> list[ModelDto]:
         data = self.get_by_id(name)
 
         query = (ModelData
@@ -65,7 +70,9 @@ class DataService(BaseServices):
                  .join(Model)
                  .where(ModelData.data == data))
         
-        return list(query)
+        return [{
+            ModelDto(name=rel.model.name)
+        }for rel in query]
     
     def set_relation_to_model(self,modelName:str,dataName:str):
         try:
