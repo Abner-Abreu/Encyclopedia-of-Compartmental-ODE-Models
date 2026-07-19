@@ -8,7 +8,7 @@ class ModelParam(BaseModel):
     model = ForeignKeyField(Model, backref='params')
     param = ForeignKeyField(Param, backref='models')
 
-    lineal = BooleanField()
+    linear = BooleanField()
     meaning = TextField()
     symbol = CharField(max_length=100)
     

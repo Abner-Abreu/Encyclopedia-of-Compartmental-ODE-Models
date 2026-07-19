@@ -1,6 +1,4 @@
-# gui/app.py
 import tkinter as tk
-from tkinter import messagebox
 
 from gui.styles import COLORS, FONTS, SIZES
 from gui.views.model_view import ModelsView

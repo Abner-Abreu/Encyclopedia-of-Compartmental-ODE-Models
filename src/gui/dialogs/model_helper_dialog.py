@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import messagebox
-from typing import Optional
 
 from .model_dialog import ModelDialog
 
