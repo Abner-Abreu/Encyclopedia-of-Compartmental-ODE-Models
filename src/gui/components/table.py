@@ -1,11 +1,9 @@
-# gui/components/table.py
 import tkinter as tk
 from tkinter import ttk
-from typing import List, Dict, Optional, Callable
 
 class DataTable:
-    def __init__(self, master, columns: List[Dict[str, str]],
-                 on_double_click: Optional[Callable] = None,
+    def __init__(self, master, columns: list[dict[str, str]],
+                 on_double_click: callable = None,
                  height: int = 15):
         self.master = master
         self.columns = columns
@@ -48,13 +46,13 @@ class DataTable:
             item = self.tree.item(self.selected)
             self.on_double_click(item['values'])
     
-    def load_data(self, data: List[List]):
+    def load_data(self, data: list[list]):
         self.data = data
         self.clear()
         for row in data:
             self.tree.insert('', 'end', values=row)
     
-    def add_row(self, row: List):
+    def add_row(self, row: list):
         self.data.append(row)
         self.tree.insert('', 'end', values=row)
     
@@ -69,7 +67,7 @@ class DataTable:
             return True
         return False
     
-    def get_selected(self) -> Optional[List]:
+    def get_selected(self) -> list | None:
         if self.selected:
             item = self.tree.item(self.selected)
             return item['values']
