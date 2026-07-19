@@ -113,10 +113,11 @@ class ModelService(BaseServices):
                  .join(Compartment)
                  .where(ModelCompartment.model == model))
 
-        return [{
-            CompartmentDto(name=rel.compartment.name,
-                           expression= rel.compartment.expression)
-        } for rel in query]
+        result = list()
+        for res in query:
+            result.append(CompartmentDto(name=res.compartment.name,
+                                         expression=res.compartment.expression))
+        return result  
         
     def get_params(self,name:str) -> list[ParamInfoDto]:
         model = self.get_by_id(name)
@@ -126,14 +127,15 @@ class ModelService(BaseServices):
                  .join(Param)
                  .where(ModelParam.model == model))
 
-        return [{
-            ParamInfoDto(name=rel.param.name,
-                     linear=rel.linear,
-                     symbol=rel.symbol,
-                     meaning=rel.meaning)
-        } for rel in query]   
+        result = list()
+        for res in query:
+            result.append(ParamInfoDto(name=res.param.name,
+                                        linear=res.linear,
+                                        symbol=res.symbol,
+                                        meaning=res.meaning))
+        return result  
     
-    def get_article(self,name:str) -> list[ArticleDto]:
+    def get_article(self,name:str) -> ArticleDto | None:
         model = self.get_by_id(name)
 
         query = (ModelArticle
@@ -141,13 +143,16 @@ class ModelService(BaseServices):
                  .join(Article)
                  .where(ModelArticle.model == model))
 
-        return [{
-            ArticleDto(name= rel.article.name,
-                       author=rel.article.author,
-                       date=rel.article.date)
-        } for rel in query]   
+        query = list(query)
+        if len(query) > 0:
+            result = query[0]
+            return ArticleDto(name=result.article.name,
+                              author=result.article.author,
+                              date=result.article.date)
+        else:
+            return None     
     
-    def get_situation(self,name:str) -> list[SituationDto]:
+    def get_situation(self,name:str) -> SituationDto | None:
         model = self.get_by_id(name)
 
         query = (ModelSituation
@@ -155,12 +160,15 @@ class ModelService(BaseServices):
                  .join(Situation)
                  .where(ModelSituation.model == model))
 
-        return [{
-            SituationDto(name=rel.situation.name,
-                         description=rel.situation.description)
-        } for rel in query]   
+        query = list(query)
+        if len(query) > 0:
+            result = query[0]
+            return SituationDto(name=result.situation.name,
+                                description=result.situation.description)
+        else:
+            return None     
     
-    def get_data(self,name:str) -> list[DataDto]:
+    def get_data(self,name:str) -> DataDto | None:
         model = self.get_by_id(name)
 
         query = (ModelData
@@ -168,11 +176,14 @@ class ModelService(BaseServices):
                  .join(Data)
                  .where(ModelData.model == model))
 
-        return [{
-            DataDto(name=rel.data.name,
-                    date=rel.data.date,
-                    place=rel.data.place)
-        } for rel in query]   
+        query = list(query)
+        if len(query) > 0:
+            result = query[0]
+            return DataDto(name=result.data.name,
+                           date=result.data.date,
+                           place=result.data.place)
+        else:
+            return None  
     
     def get_all(self,name:str) -> ModelInfoDto:
         model = self.get_by_id(name)
