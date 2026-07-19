@@ -1,8 +1,26 @@
 from peewee import DoesNotExist, IntegrityError, fn
-from database import (Model,Compartment, Param,Situation,Data,Article,
-                      ModelArticle,ModelCompartment,ModelData,ModelParam,ModelSituation,
+
+from database import (Model,
+                      Compartment, 
+                      Param,
+                      Situation,
+                      Data,
+                      Article,
+                      ModelArticle,
+                      ModelCompartment,
+                      ModelData,
+                      ModelParam,
+                      ModelSituation,
                       db)
-from typing import List,Optional,Dict,Any
+
+from dtos import (ArticleDto,
+                  CompartmentDto,
+                  DataDto,
+                  ModelDto,
+                  ModelInfoDto,
+                  ParamInfoDto,
+                  SituationDto,
+                  FiltersDto)
 import logging
 
 from .base_services import BaseServices
@@ -28,32 +46,36 @@ class ModelService(BaseServices):
             logger.warning(f"Model {name} not finded")
             raise ValueError(f"Model {name} not finded")
         
-    def to_list(self,filters: Optional[Dict[str,Any]] = None) -> List[Model]:
+    def to_list(self,filters: FiltersDto | None = None) -> list[ModelDto]:
 
         query = Model.select()
 
         if filters:
-            if filters['name__contains']:
-                query = query.where(Model.name.contains(filters['name__contains']))
-            if filters['parameter__contains']:
-                query = query.where(Param.name.contains(filters['parameter__contains']))
-            if filters['compartment__contains']:
-                query = query.where(Compartment.name.contains(filters['compartment__contains']))
-            if filters['situation__contains']:
-                query = query.where(Situation.name.contains(filters['situation__contains']))
-            if filters['article__contains']:
-                query = query.where(Article.name.contains(filters['article__contains']))
-            if filters['all__linear']:
+            if filters.name_contains:
+                query = query.where(Model.name.contains(filters.name_contains))
+            if filters.parameter_contains:
+                query = query.where(Param.name.contains(filters.parameter_contains))
+            if filters.compartment_contains:
+                query = query.where(Compartment.name.contains(filters.compartment_contains))
+            if filters.situation_contains:
+                query = query.where(Situation.name.contains(filters.situation_contains))
+            if filters.article_contains:
+                query = query.where(Article.name.contains(filters.article_contains))
+            if filters.all_linear:
                 query = query.where(~fn.EXISTS(
                                             ModelParam
                                             .select()
                                             .where((ModelParam.model == Model.name) & 
-                                            (ModelParam.lineal == False))
+                                            (ModelParam.linear == False))
                                     ))
 
         query = query.order_by(Model.name.asc())
         
-        return list(query)
+        result = list()
+        for res in query:
+            result.append(ModelDto(name=res.name))
+            
+        return result
     
     def update(self):
         return
@@ -83,7 +105,7 @@ class ModelService(BaseServices):
         logger.info(f"Model deleted: {name}")
         return True
     
-    def get_compartments(self,name:str) -> List[Dict[str, Any]]:
+    def get_compartments(self,name:str) -> list[CompartmentDto]:
         model = self.get_by_id(name)
 
         query = (ModelCompartment
@@ -92,11 +114,11 @@ class ModelService(BaseServices):
                  .where(ModelCompartment.model == model))
 
         return [{
-            'name': rel.compartment.name,
-            'expression': rel.compartment.expression
+            CompartmentDto(name=rel.compartment.name,
+                           expression= rel.compartment.expression)
         } for rel in query]
         
-    def get_params(self,name:str) -> List[Dict[str,Any]]:
+    def get_params(self,name:str) -> list[ParamInfoDto]:
         model = self.get_by_id(name)
 
         query = (ModelParam
@@ -105,13 +127,13 @@ class ModelService(BaseServices):
                  .where(ModelParam.model == model))
 
         return [{
-            'name': rel.param.name,
-            'lineal': rel.lineal,
-            'symbol': rel.symbol,
-            'meaning': rel.meaning
+            ParamInfoDto(name=rel.param.name,
+                     linear=rel.linear,
+                     symbol=rel.symbol,
+                     meaning=rel.meaning)
         } for rel in query]   
     
-    def get_article(self,name:str) -> List[Dict[str,Any]]:
+    def get_article(self,name:str) -> list[ArticleDto]:
         model = self.get_by_id(name)
 
         query = (ModelArticle
@@ -120,12 +142,12 @@ class ModelService(BaseServices):
                  .where(ModelArticle.model == model))
 
         return [{
-            'name': rel.article.name,
-            'author': rel.article.author,
-            'date': rel.article.date
+            ArticleDto(name= rel.article.name,
+                       author=rel.article.author,
+                       date=rel.article.date)
         } for rel in query]   
     
-    def get_situation(self,name:str) -> List[Dict[str,Any]]:
+    def get_situation(self,name:str) -> list[SituationDto]:
         model = self.get_by_id(name)
 
         query = (ModelSituation
@@ -134,11 +156,11 @@ class ModelService(BaseServices):
                  .where(ModelSituation.model == model))
 
         return [{
-            'name': rel.situation.name,
-            'description': rel.situation.description
+            SituationDto(name=rel.situation.name,
+                         description=rel.situation.description)
         } for rel in query]   
     
-    def get_data(self,name:str) -> List[Dict[str,Any]]:
+    def get_data(self,name:str) -> list[DataDto]:
         model = self.get_by_id(name)
 
         query = (ModelData
@@ -147,19 +169,17 @@ class ModelService(BaseServices):
                  .where(ModelData.model == model))
 
         return [{
-            'name': rel.data.name,
-            'date': rel.data.date,
-            'place': rel.data.place
+            DataDto(name=rel.data.name,
+                    date=rel.data.date,
+                    place=rel.data.place)
         } for rel in query]   
     
-    def get_all(self,name:str) -> Dict[str,Any]:
+    def get_all(self,name:str) -> ModelInfoDto:
         model = self.get_by_id(name)
 
-        return {
-            'name': model.name,
-            'compartments': self.get_compartments(name),
-            'params': self.get_params(name),
-            'situation': self.get_situation(name),
-            'article': self.get_article(name),
-            'data': self.get_data(name)
-        }
+        return ModelInfoDto(name=model.name,
+                            compartments=self.get_compartments(name),
+                            params=self.get_params(name),
+                            situation=self.get_situation(name),
+                            article=self.get_article(name),
+                            data=self.get_data(name))
