@@ -1,6 +1,13 @@
 from peewee import DoesNotExist, IntegrityError
-from database import Model,Article,ModelArticle,db
-from typing import List,Optional,Dict,Any
+
+from database import (Model,
+                      Article,
+                      ModelArticle,
+                      db)
+
+from dtos import (ArticleDto,
+                  ModelDto)
+
 import logging
 
 from .base_services import BaseServices
@@ -26,20 +33,18 @@ class ArticleService(BaseServices):
             logger.warning(f"Article {name} not finded")
             raise ValueError(f"Article {name} not finded")
         
-    def to_list(self,filters: Optional[Dict[str,Any]] = None) -> List[Article]:
+    def to_list(self) -> list[ArticleDto]:
 
         query = Article.select()
-
-        if filters:
-            for field,value in filter:
-                if field == 'name__contains':
-                    query = query.where(Article.name.contains(value))
-                elif field == 'name__startswith':
-                    query = query.where(Article.name.startswith(value))
-
         query = query.order_by(Article.name.asc())
         
-        return list(query)
+        result = list()
+        for res in query:
+            result.append(ArticleDto(name=res.name,
+                                     author=res.author,
+                                     date=res.author))
+            
+        return result
     
     def update(self):
         return
@@ -57,7 +62,7 @@ class ArticleService(BaseServices):
         logger.info(f"Article deleted: {name}")
         return True
     
-    def get_models(self,name:str) -> List[Model]:
+    def get_models(self,name:str) -> list[ModelDto]:
         article = self.get_by_id(name)
 
         query = (ModelArticle
@@ -65,7 +70,9 @@ class ArticleService(BaseServices):
                  .join(Model)
                  .where(ModelArticle.article == article))
         
-        return list(query)
+        return [{
+            ModelDto(name=rel.model.name)
+        }for rel in query]
 
     def set_relation_to_model(self,modelName:str,articleName:str):
         try:
