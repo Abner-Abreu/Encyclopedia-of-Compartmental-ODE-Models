@@ -1,11 +1,11 @@
-
 import tkinter as tk
-from typing import Optional, Callable, Dict, Any
+
+from dtos import FiltersDto
 
 from gui.styles import COLORS, FONTS
 
 class ModelFilters:
-    def __init__(self, master, on_filter: Callable, on_clear: Optional[Callable] = None):
+    def __init__(self, master, on_filter: callable, on_clear: callable = None):
         self.master = master
         self.on_filter = on_filter
         self.on_clear = on_clear
@@ -116,23 +116,10 @@ class ModelFilters:
         self.var_linear.set(False)
         self._apply_filters()
     
-    def _get_filters(self) -> Dict[str, Any]:
-        filters = {}
-        name = self.entry_name.get().strip()
-        filters['name__contains'] = name
-
-        parameter = self.entry_parameter.get().strip()
-        filters['parameter__contains'] = parameter
-
-        compartment = self.entry_compartment.get().strip()
-        filters['compartment__contains'] = compartment
-
-        situation = self.entry_situation.get().strip()
-        filters['situation__contains'] = situation
-
-        article = self.entry_article.get().strip()
-        filters['article__contains'] = article
-        
-        all_linear = self.var_linear.get()
-        filters['all__linear'] = all_linear
-        return filters
+    def _get_filters(self) -> FiltersDto:
+        return FiltersDto(name_contains=self.entry_name.get().strip(),
+                          parameter_contains=self.entry_parameter.get().strip(),
+                          compartment_contains=self.entry_compartment.get().strip(),
+                          situation_contains=self.entry_situation.get().strip(),
+                          article_contains=self.entry_article.get().strip(),
+                          all_linear=self.var_linear.get())
