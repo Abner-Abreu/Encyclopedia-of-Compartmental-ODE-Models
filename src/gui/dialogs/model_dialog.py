@@ -5,6 +5,15 @@ from gui.styles import COLORS, FONTS
 
 from services import ServiceHandler
 
+from dtos import (ModelInfoDto,
+                  CompartmentDto,
+                  ParamInfoDto,
+                  SituationDto,
+                  DataDto,
+                  ArticleDto)
+
+from datetime import datetime
+
 class ModelDialog:
     def __init__(self, master, model_service :ServiceHandler, compartments_cant: int = 1,
                  params_cant: int = 1):
@@ -410,20 +419,19 @@ class ModelDialog:
                 'linear': entry_linear
             })
 
-    def _get_compartment_data(self): 
+    def _get_compartment_data(self) -> list[CompartmentDto]: 
         """Returns list of compartment data from the entries."""
         compartments = []
         for entry in self.compartments_entries:
             name = entry['name'].get().strip()
             expression = entry['expression'].get().strip()
-            if name or expression:
-                compartments.append({
-                    'name': name,
-                    'expression': expression
-                })
+            
+            compartments.append(
+                CompartmentDto(name=name,
+                               expression=expression))
         return compartments
 
-    def _get_parameter_data(self):
+    def _get_parameter_data(self) -> list[ParamInfoDto]:
         """Returns list of parameter data from the entries."""
         parameters = []
         for entry in self.parameters_entries:
@@ -432,52 +440,22 @@ class ModelDialog:
             meaning = entry['meaning'].get().strip()
             linear_str = entry['linear'].get().strip().lower()
 
-            if name:
-                # Convert linear string to boolean
-                linear = linear_str in ('true', 'yes', '1', 'si')
-                parameters.append({
-                    'name': name,
-                    'symbol': symbol,
-                    'meaning': meaning,
-                    'linear': linear
-                })
+            # Convert linear string to boolean
+            linear = linear_str in ('true', 'yes', '1', 'si')
+
+            parameters.append(
+                ParamInfoDto(name=name,
+                             linear=linear,
+                             symbol=symbol,
+                             meaning=meaning))
         return parameters
 
     def _save(self):
-        name = self.entry_name.get().strip()
+        
 
         try:
-            # Get all data from entries
-            compartments = self._get_compartment_data()
-            parameters = self._get_parameter_data()
-
-            # Get situation, article, data data
-            situation_name = self.entry_situation_name.get().strip()
-            situation_desc = self.entry_situation_description.get().strip()
-
-            article_name = self.entry_article_name.get().strip()
-            article_author = self.entry_article_author.get().strip()
-            article_date = self.entry_article_date.get().strip()
-
-            data_name = self.entry_data_name.get().strip()
-            data_place = self.entry_data_place.get().strip()
-            data_date = self.entry_data_date.get().strip()
-
-            self.model_service.create_complete(
-                name=name,
-                compartments=compartments,
-                parameters=parameters,
-                situation_name=situation_name,
-                situation_description=situation_desc,
-                article_name=article_name,
-                article_author=article_author,
-                article_date=article_date,
-                data_name=data_name,
-                data_place=data_place,
-                data_date=data_date
-            )
-
-            self.result = name
+            self.model_service.create_complete(self._generate_model_info())
+            self.result = self.entry_name.get().strip()
 
             self.window.destroy()
 
@@ -488,3 +466,39 @@ class ModelDialog:
 
     def _cancel(self):
         self.window.destroy()
+
+    def _generate_model_info(self) -> ModelInfoDto:
+
+        name = self.entry_name.get().strip()
+
+        # Get all data from entries
+        compartments = self._get_compartment_data()
+        parameters = self._get_parameter_data()
+
+        # Get situation, article, data data
+        situation_name = self.entry_situation_name.get().strip()
+        situation_desc = self.entry_situation_description.get().strip()
+        situation = SituationDto(name=situation_name,
+                                 description=situation_desc)
+
+        article_name = self.entry_article_name.get().strip()
+        article_author = self.entry_article_author.get().strip()
+        article_date = datetime.fromisoformat(self.entry_article_date.get().strip())
+        article = ArticleDto(name=article_name,
+                             author=article_author,
+                             date=article_date)
+        
+        data_name = self.entry_data_name.get().strip()
+        data_place = self.entry_data_place.get().strip()
+        data_date = datetime.fromisoformat(self.entry_data_date.get().strip())
+        
+        data = DataDto(name=data_name,
+                       date=data_date,
+                       place=data_place)
+
+        return ModelInfoDto(name=name,
+                            compartments=compartments,
+                            params=parameters,
+                            situation=situation,
+                            article=article,
+                            data=data)
