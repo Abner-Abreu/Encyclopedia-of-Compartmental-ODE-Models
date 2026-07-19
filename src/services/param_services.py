@@ -1,6 +1,13 @@
 from peewee import DoesNotExist, IntegrityError
-from database import Model,Param,ModelParam,db
-from typing import List,Optional,Dict,Any
+
+from database import (Model,
+                      Param,
+                      ModelParam,
+                      db)
+
+from dtos import (ParamDto,
+                  ModelDto)
+
 import logging
 
 from .base_services import BaseServices
@@ -26,20 +33,17 @@ class ParamService(BaseServices):
             logger.warning(f"Param {name} not finded")
             raise ValueError(f"Param {name} not finded")
         
-    def to_list(self,filters: Optional[Dict[str,Any]] = None) -> List[Param]:
+    def to_list(self) -> list[ParamDto]:
 
         query = Param.select()
-
-        if filters:
-            for field,value in filter:
-                if field == 'name__contains':
-                    query = query.where(Param.name.contains(value))
-                elif field == 'name__startswith':
-                    query = query.where(Param.name.startswith(value))
-
         query = query.order_by(Param.name.asc())
-        
-        return list(query)
+
+        result = list()
+        result = list()
+        for res in query:
+            result.append(ParamDto(name=res.name))
+            
+        return result
     
     def update(self):
         return
@@ -57,7 +61,7 @@ class ParamService(BaseServices):
         logger.info(f"Article deleted: {name}")
         return True
     
-    def get_models(self,name:str) -> List[Model]:
+    def get_models(self,name:str) -> list[ModelDto]:
         param = self.get_by_id(name)
 
         query = (ModelParam
@@ -65,9 +69,16 @@ class ParamService(BaseServices):
                  .join(Model)
                  .where(ModelParam.param == param))
         
-        return list(query)
+        return [{
+            ModelDto(name=rel.model.name)
+        }for rel in query]
     
-    def set_relation_to_model(self,modelName:str,paramName:str,lineal:bool,meaning:str,symbol:str):
+    def set_relation_to_model(self,
+                              modelName:str,
+                              paramName:str,
+                              lineal:bool,
+                              meaning:str,
+                              symbol:str):
         try:
             model_param = ModelParam.create(model=modelName,
                                             param=paramName,
