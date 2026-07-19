@@ -1,6 +1,13 @@
 from peewee import DoesNotExist, IntegrityError
-from database import Model,Situation,ModelSituation,db
-from typing import List,Optional,Dict,Any
+
+from database import (Model,
+                      Situation,
+                      ModelSituation,
+                      db)
+
+from dtos import (SituationDto,
+                  ModelDto)
+
 import logging
 
 from .base_services import BaseServices
@@ -26,20 +33,17 @@ class SituationService(BaseServices):
             logger.warning(f"Situation {name} not finded")
             raise ValueError(f"Situation {name} not finded")
         
-    def to_list(self,filters: Optional[Dict[str,Any]] = None) -> List[Situation]:
+    def to_list(self) -> list[SituationDto]:
 
         query = Situation.select()
-
-        if filters:
-            for field,value in filter:
-                if field == 'name__contains':
-                    query = query.where(Situation.name.contains(value))
-                elif field == 'name__startswith':
-                    query = query.where(Situation.name.startswith(value))
-
         query = query.order_by(Situation.name.asc())
         
-        return list(query)
+        result = list()
+        for res in query:
+            result.append(SituationDto(name=res.name,
+                                       description=res.description))
+            
+        return result
     
     def update(self):
         return
@@ -57,7 +61,7 @@ class SituationService(BaseServices):
         logger.info(f"Situation deleted: {name}")
         return True
     
-    def get_models(self,name:str) -> List[Model]:
+    def get_models(self,name:str) -> list[ModelDto]:
         situation = self.get_by_id(name)
 
         query = (ModelSituation
@@ -65,7 +69,9 @@ class SituationService(BaseServices):
                  .join(Model)
                  .where(ModelSituation.situation == situation))
         
-        return list(query)
+        return [{
+            ModelDto(name=rel.model.name)
+        }for rel in query]
     
     def set_relation_to_model(self,modelName:str,situationName:str):
         try:
