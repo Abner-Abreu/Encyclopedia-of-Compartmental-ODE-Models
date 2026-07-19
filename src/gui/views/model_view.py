@@ -81,11 +81,11 @@ class ModelsView:
         data = []
         for m in models:
             try:
-                situation = self.service.model.get_situation(m.name)[0].name
+                situation = self.service.model.get_situation(m.name).name
             except:
                 situation = "Not found"
             try:
-                article = self.service.model.get_article(m.name)[0].name
+                article = self.service.model.get_article(m.name).name
             except:
                 article = "Not found"
             try:
