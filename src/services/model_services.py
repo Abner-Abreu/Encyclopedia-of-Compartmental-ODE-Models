@@ -1,4 +1,4 @@
-from peewee import DoesNotExist, IntegrityError, fn
+from peewee import DoesNotExist, IntegrityError, fn, JOIN
 
 from database import (Model,
                       Compartment, 
@@ -45,36 +45,56 @@ class ModelService(BaseServices):
         except DoesNotExist:
             logger.warning(f"Model {name} not finded")
             raise ValueError(f"Model {name} not finded")
-        
-    def to_list(self,filters: FiltersDto | None = None) -> list[ModelDto]:
 
+    def to_list(self, filters: FiltersDto | None = None) -> list[ModelDto]:
         query = Model.select()
 
         if filters:
             if filters.name_contains:
                 query = query.where(Model.name.contains(filters.name_contains))
+        
             if filters.parameter_contains:
-                query = query.where(Param.name.contains(filters.parameter_contains))
+                subquery = (ModelParam
+                            .select(ModelParam.model)
+                            .join(Param, JOIN.LEFT_OUTER)
+                            .where(Param.name.contains(filters.parameter_contains)))
+                query = query.where(Model.name.in_(subquery))
+        
             if filters.compartment_contains:
-                query = query.where(Compartment.name.contains(filters.compartment_contains))
+                subquery = (ModelCompartment
+                            .select(ModelCompartment.model)
+                            .join(Compartment, JOIN.LEFT_OUTER)
+                            .where(Compartment.name.contains(filters.compartment_contains)))
+                query = query.where(Model.name.in_(subquery))
+        
             if filters.situation_contains:
-                query = query.where(Situation.name.contains(filters.situation_contains))
+                subquery = (ModelSituation
+                            .select(ModelSituation.model)
+                            .join(Situation, JOIN.LEFT_OUTER)
+                            .where(Situation.name.contains(filters.situation_contains)))
+                query = query.where(Model.name.in_(subquery))
+        
             if filters.article_contains:
-                query = query.where(Article.name.contains(filters.article_contains))
+                subquery = (ModelArticle
+                            .select(ModelArticle.model)
+                            .join(Article, JOIN.LEFT_OUTER)
+                            .where(Article.name.contains(filters.article_contains)))
+                query = query.where(Model.name.in_(subquery))
+        
             if filters.all_linear:
                 query = query.where(~fn.EXISTS(
-                                            ModelParam
-                                            .select()
-                                            .where((ModelParam.model == Model.name) & 
-                                            (ModelParam.linear == False))
-                                    ))
+                    ModelParam
+                    .select()
+                    .where((ModelParam.model == Model.name) & 
+                           (ModelParam.linear == False))
+                ))
 
         query = query.order_by(Model.name.asc())
-        
-        result = list()
+    
+        result = []
         for res in query:
             result.append(ModelDto(name=res.name))
-            
+    
         return result
     
     def update(self):
