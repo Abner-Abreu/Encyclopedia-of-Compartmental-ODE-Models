@@ -1,0 +1,4 @@
+#ORM for database
+peewee>=4.1.2
+#Necessary to get DB_PATH
+platformdirs>=4.11.0
