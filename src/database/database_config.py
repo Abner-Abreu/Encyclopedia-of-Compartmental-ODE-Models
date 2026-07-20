@@ -1,7 +1,9 @@
 from peewee import SqliteDatabase
-import os
+from platformdirs import user_documents_path
 
-DB_PATH = os.path.join(os.path.dirname(__file__), 'encyclopedia.db')
+DB_DIR = user_documents_path() / "Encyclopedia Of Compartmental ODE Models"
+DB_DIR.mkdir(parents=True,exist_ok=True)
+DB_PATH = DB_DIR / 'encyclopedia.db'
 
 db = SqliteDatabase(DB_PATH, pragmas={
     'journal_mode': 'wal',
