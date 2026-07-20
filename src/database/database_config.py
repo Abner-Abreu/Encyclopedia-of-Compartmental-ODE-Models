@@ -13,6 +13,9 @@ db = SqliteDatabase(DB_PATH, pragmas={
 })
 
 def init_db():
+    """
+    Initilize the conection to the database and creates tables if needed
+    """
     db.connect()
     from . import (
         Model, Compartment, Param, Article, 
