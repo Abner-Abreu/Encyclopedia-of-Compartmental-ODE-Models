@@ -15,8 +15,47 @@ from dtos import (ModelInfoDto,
 from datetime import datetime
 
 class ModelDialog:
-    def __init__(self, master, model_service :ServiceHandler, compartments_cant: int = 1,
+    """
+    A comprehensive dialog for creating a new model with all its associated data.
+
+    This dialog provides a full-featured interface for entering all data
+    required to create a complete model, including:
+        - Model name
+        - Situation (name and description)
+        - Article (name, author, date)
+        - Data (name, place, date) - optional
+        - Multiple compartments (name and expression)
+        - Multiple parameters (name, symbol, meaning, linearity)
+
+    The dialog is organized into three columns:
+        - Column 1: Model name, Situation, Article, Data
+        - Column 2: Compartments (scrollable)
+        - Column 3: Parameters (scrollable)
+
+    All data is collected and assembled into a ModelInfoDto which is then
+    passed to the ServiceHandler for creation.
+
+    Attributes:
+        master: The parent widget.
+        model_service (ServiceHandler): The service handler for database operations.
+        compartments_cant (int): Number of compartment entries to display.
+        params_cant (int): Number of parameter entries to display.
+        result (str | None): The name of the created model, or None if cancelled.
+    """
+
+    def __init__(self, master, 
+                 model_service: ServiceHandler, 
+                 compartments_cant: int = 1,
                  params_cant: int = 1):
+        """
+        Initializes the ModelDialog.
+
+        Args:
+            master: The parent widget.
+            model_service: The ServiceHandler instance for database operations.
+            compartments_cant: Number of compartment entries to display. Defaults to 1.
+            params_cant: Number of parameter entries to display. Defaults to 1.
+        """
         self.master = master
         self.model_service = model_service
         self.result = None
@@ -25,6 +64,17 @@ class ModelDialog:
         self._create_window()
 
     def _create_window(self):
+        """
+        Creates and configures the dialog window with all input fields.
+
+        The window features:
+            - Three columns with labeled sections
+            - Scrollable compartments and parameters sections
+            - Save and Cancel buttons
+            - Keyboard shortcuts (Enter to save, Escape to cancel)
+
+        The window is centered on the screen and is resizable.
+        """
         title = "New Model"
         self.window = tk.Toplevel(self.master)
         self.window.title(title)
@@ -288,7 +338,19 @@ class ModelDialog:
         self.entry_name.focus_set()
 
     def _create_compartment_entries(self, parent):
-        """Creates scrollable entries for compartments."""
+        """
+        Creates scrollable entries for compartments.
+
+        This method creates a canvas with a scrollbar and populates it
+        with entry fields for each compartment.
+
+        Args:
+            parent: The parent widget (LabelFrame) to place the entries in.
+
+        Note:
+            Each compartment has two fields: Name and Expression.
+            The entries are stored in self.compartments_entries.
+        """
         # Canvas with scrollbar
         canvas = tk.Canvas(parent, bg=COLORS['background'], highlightthickness=0)
         scrollbar = tk.Scrollbar(parent, orient='vertical', command=canvas.yview)
@@ -343,7 +405,19 @@ class ModelDialog:
             })
 
     def _create_parameter_entries(self, parent):
-        """Creates scrollable entries for parameters."""
+        """
+        Creates scrollable entries for parameters.
+
+        This method creates a canvas with a scrollbar and populates it
+        with entry fields for each parameter.
+
+        Args:
+            parent: The parent widget (LabelFrame) to place the entries in.
+
+        Note:
+            Each parameter has four fields: Name, Symbol, Meaning, and Linear.
+            The entries are stored in self.parameters_entries.
+        """
         # Canvas with scrollbar
         canvas = tk.Canvas(parent, bg=COLORS['background'], highlightthickness=0)
         scrollbar = tk.Scrollbar(parent, orient='vertical', command=canvas.yview)
@@ -419,20 +493,34 @@ class ModelDialog:
                 'linear': entry_linear
             })
 
-    def _get_compartment_data(self) -> list[CompartmentDto]: 
-        """Returns list of compartment data from the entries."""
+    def _get_compartment_data(self) -> list[CompartmentDto]:
+        """
+        Collects compartment data from all compartment entry fields.
+
+        Returns:
+            list[CompartmentDto]: A list of CompartmentDto objects
+                containing the entered compartment data.
+        """
         compartments = []
         for entry in self.compartments_entries:
             name = entry['name'].get().strip()
             expression = entry['expression'].get().strip()
-            
+
             compartments.append(
-                CompartmentDto(name=name,
-                               expression=expression))
+                CompartmentDto(name=name, expression=expression))
         return compartments
 
     def _get_parameter_data(self) -> list[ParamInfoDto]:
-        """Returns list of parameter data from the entries."""
+        """
+        Collects parameter data from all parameter entry fields.
+
+        The linear field is converted to a boolean by checking if the
+        string matches 'true', 'yes', '1', or 'si' (case-insensitive).
+
+        Returns:
+            list[ParamInfoDto]: A list of ParamInfoDto objects
+                containing the entered parameter data.
+        """
         parameters = []
         for entry in self.parameters_entries:
             name = entry['name'].get().strip()
@@ -451,8 +539,19 @@ class ModelDialog:
         return parameters
 
     def _save(self):
-        
+        """
+        Saves the model data by creating a complete model.
 
+        This method:
+            1. Generates a ModelInfoDto from all entry fields
+            2. Passes it to the ServiceHandler for creation
+            3. Sets the result to the model name
+            4. Closes the dialog on success
+
+        Raises:
+            ValueError: If validation fails (caught and displayed).
+            Exception: For other errors (caught and displayed).
+        """
         try:
             self.model_service.create_complete(self._generate_model_info())
             self.result = self.entry_name.get().strip()
@@ -465,10 +564,30 @@ class ModelDialog:
             messagebox.showerror("Error", f"Could not save: {e}")
 
     def _cancel(self):
+        """
+        Closes the dialog without saving.
+
+        The result attribute remains None.
+        """
         self.window.destroy()
 
     def _generate_model_info(self) -> ModelInfoDto:
+        """
+        Collects all data from the dialog entries and builds a ModelInfoDto.
 
+        This method:
+            1. Gets the model name
+            2. Gets all compartments and parameters
+            3. Builds SituationDto, ArticleDto, and DataDto
+            4. Returns a complete ModelInfoDto
+
+        Returns:
+            ModelInfoDto: A DTO containing all the data entered in the dialog.
+
+        Note:
+            The date fields are parsed using datetime.fromisoformat().
+            This requires dates to be in the format YYYY-MM-DD.
+        """
         name = self.entry_name.get().strip()
 
         # Get all data from entries
@@ -487,11 +606,11 @@ class ModelDialog:
         article = ArticleDto(name=article_name,
                              author=article_author,
                              date=article_date)
-        
+
         data_name = self.entry_data_name.get().strip()
         data_place = self.entry_data_place.get().strip()
         data_date = datetime.fromisoformat(self.entry_data_date.get().strip())
-        
+
         data = DataDto(name=data_name,
                        date=data_date,
                        place=data_place)
