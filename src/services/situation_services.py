@@ -2,11 +2,12 @@ from peewee import DoesNotExist, IntegrityError
 
 from database import (Model,
                       Situation,
-                      ModelSituation,
                       db)
 
 from dtos import (SituationDto,
-                  ModelDto)
+                  ModelDto,
+                  DataDto,
+                  ArticleDto)
 
 import logging
 
@@ -121,8 +122,8 @@ class SituationService(BaseServices):
         situation = self.get_by_id(name)
 
         with db.atomic():
-            ModelSituation.delete().where(
-                ModelSituation.situation == situation
+            Model.delete().where(
+                Model.situation == situation
             ).execute()
 
             situation.delete_instance()
@@ -144,42 +145,38 @@ class SituationService(BaseServices):
         Raises:
             ValueError: If no situation is found with the given name.
         """
-        situation = self.get_by_id(name)
+        situation= self.get_by_id(name)
 
-        query = (ModelSituation
-                 .select(ModelSituation, Model)
-                 .join(Model)
-                 .where(ModelSituation.situation == situation))
+        query = (Model
+                 .select()
+                 .where(Model.situation == situation))
 
-        return [
-            ModelDto(name=rel.model.name)
-            for rel in query
-        ]
-
-    def set_relation_to_model(self, modelName: str, situationName: str):
-        """
-        Creates a relationship between a model and a situation.
-
-        Args:
-            modelName: The unique identifier of the model.
-            situationName: The unique identifier of the situation.
-
-        Returns:
-            ModelSituation: The created ModelSituation relationship instance.
-
-        Raises:
-            ValueError: If the relationship cannot be created (e.g.,
-                duplicate relationship or one of the entities does not exist).
-        """
-        try:
-            model_situation = ModelSituation.create(
-                model=modelName,
-                situation=situationName
+        situationDto = SituationDto(
+                name=situation.name,
+                description=situation.description
             )
-            logger.info(f"Relation Model: {modelName} - Situation: {situationName} created")
+        
+        result = list()
+        for res in query:
+            articleDto = ArticleDto(
+                name=res.article.name,
+                author=res.article.author,
+                date=res.article.date
+            )
+            if res.data:
+                dataDto = DataDto(
+                    name=res.data.name,
+                    date=res.data.date,
+                    place=res.data.place
+                )
+            else:
+                dataDto = None
+                
+            result.append(ModelDto(
+                name=res.name,
+                situation=situationDto,
+                article=articleDto,
+                data=dataDto
+                ))
 
-            return model_situation
-
-        except IntegrityError as e:
-            logger.error(f"Error when creating relation Model: {modelName} - Situation: {situationName}: {e}")
-            raise ValueError(f"A relation Model: {modelName} - Situation: {situationName} cannot be created")
+        return result

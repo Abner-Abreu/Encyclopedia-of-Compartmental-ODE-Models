@@ -2,11 +2,12 @@ from peewee import DoesNotExist, IntegrityError
 
 from database import (Model,
                       Data,
-                      ModelData,
                       db)
 
 from dtos import (DataDto,
-                  ModelDto)
+                  ModelDto,
+                  SituationDto,
+                  ArticleDto)
 
 import logging
 
@@ -123,10 +124,10 @@ class DataService(BaseServices):
         data = self.get_by_id(name)
 
         with db.atomic():
-            ModelData.delete().where(
-                ModelData.data == data
+            Model.delete().where(
+                Model.data == data
             ).execute()
-
+            
             data.delete_instance()
 
         logger.info(f"Data deleted: {name}")
@@ -148,37 +149,32 @@ class DataService(BaseServices):
         """
         data = self.get_by_id(name)
 
-        query = (ModelData
-                 .select(ModelData, Model)
-                 .join(Model)
-                 .where(ModelData.data == data))
+        query = (Model
+                 .select()
+                 .where(Model.data == data))
+        
+        dataDto = DataDto(
+            name=data.name,
+            date=data.date,
+            place=data.place
+        )
 
-        return [
-            ModelDto(name=rel.model.name)
-            for rel in query
-        ]
+        result = list()
+        for res in query:
+            situationDto = SituationDto(
+                name=res.situation.name,
+                description=res.situation.description
+            )
+            articleDto = ArticleDto(
+                name=res.article.name,
+                author=res.article.author,
+                date=res.article.date
+            )
+            result.append(ModelDto(
+                name=res.name,
+                situation=situationDto,
+                article=articleDto,
+                data=dataDto
+                ))
 
-    def set_relation_to_model(self, modelName: str, dataName: str):
-        """
-        Creates a relationship between a model and a data entry.
-
-        Args:
-            modelName: The unique identifier of the model.
-            dataName: The unique identifier of the data entry.
-
-        Returns:
-            ModelData: The created ModelData relationship instance.
-
-        Raises:
-            ValueError: If the relationship cannot be created (e.g.,
-                duplicate relationship or one of the entities does not exist).
-        """
-        try:
-            model_data = ModelData.create(model=modelName, data=dataName)
-            logger.info(f"Relation Model: {modelName} - Data: {dataName} created")
-
-            return model_data
-
-        except IntegrityError as e:
-            logger.error(f"Error when creating relation Model: {modelName} - Data: {dataName}: {e}")
-            raise ValueError(f"A relation Model: {modelName} - Data: {dataName} cannot be created")
+        return result
