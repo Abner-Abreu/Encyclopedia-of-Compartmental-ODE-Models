@@ -20,13 +20,11 @@ def init_db():
     from . import (
         Model, Compartment, Param, Article, 
         Situation, Data,
-        ModelCompartment, ModelParam, 
-        ModelArticle, ModelSituation, ModelData
+        ModelCompartment, ModelParam
     )
     db.create_tables([
         Model, Compartment, Param, Article, 
         Situation, Data,
-        ModelCompartment, ModelParam, 
-        ModelArticle, ModelSituation, ModelData
+        ModelCompartment, ModelParam
     ])
     return db
