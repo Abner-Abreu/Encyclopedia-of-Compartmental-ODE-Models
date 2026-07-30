@@ -1,6 +1,6 @@
-from .BaseDto import BaseDto
+from .ParamDto import ParamDto
 
-class ParamInfoDto(BaseDto):
+class ParamInfoDto(ParamDto):
     """
     Data Transfer Object for parameter information within a model context.
 
@@ -17,7 +17,7 @@ class ParamInfoDto(BaseDto):
         name (str): Unique identifier of the parameter (inherited from BaseDto).
         linear (bool): Indicates whether the model is linear with respect
             to this parameter.
-        symbol (str): LaTeX symbol representing the parameter in the
+        symbol (str): Symbol representing the parameter in the
             context of this model (e.g., '\\alpha', '\\omega_0').
         meaning (str): Physical or mathematical description of the
             parameter's meaning in the context of this model.

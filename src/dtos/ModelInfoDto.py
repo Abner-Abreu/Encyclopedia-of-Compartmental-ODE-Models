@@ -1,11 +1,11 @@
-from .BaseDto import BaseDto
 from .ArticleDto import ArticleDto
 from .CompartmentDto import CompartmentDto
 from .DataDto import DataDto
 from .ParamInfoDto import ParamInfoDto
 from .SituationDto import SituationDto
+from .ModelDto import ModelDto
 
-class ModelInfoDto(BaseDto):
+class ModelInfoDto(ModelDto):
     """
     Data Transfer Object for complete model information.
 
@@ -43,9 +43,9 @@ class ModelInfoDto(BaseDto):
                  article: ArticleDto,
                  data: DataDto | None
                  ):
-        super().__init__(name)
+        super().__init__(name=name,
+                         situation=situation,
+                         article=article,
+                         data=data)
         self.compartments = compartments
         self.params = params
-        self.situation = situation
-        self.article = article
-        self.data = data
