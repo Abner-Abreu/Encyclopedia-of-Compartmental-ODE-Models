@@ -144,10 +144,8 @@ class ModelsView:
             models loaded.
         """
         try:
-            models = self.service.model.to_list()
-            self.all_models = models
-            self._display_models(models)
-            self.label_counter.config(text=f"📊 Showing {len(self.all_models)} models")
+            self._update_models()
+            self._display_models(self.all_models)
         except Exception as e:
             messagebox.showerror("Error", f"Could not load models: {e}")
             self.all_models = []
@@ -199,6 +197,7 @@ class ModelsView:
             The counter label is updated to show the number of filtered
             results relative to the total number of models.
         """
+        self._update_models()
         filtered_models = self.service.model.to_list(filters=filters)
         self._display_models(filtered_models)
         self.label_counter.config(
@@ -244,6 +243,11 @@ class ModelsView:
             messagebox.showinfo("Success", f"Model '{name}' deleted")
         except Exception as e:
             messagebox.showerror("Error", f"Could not delete: {e}")
+
+    def _update_models(self):
+        models = self.service.model.to_list()
+        self.all_models = models
+        self.label_counter.config(text=f"Showing {len(self.all_models)} models")
 
     def _view_details(self):
         """
