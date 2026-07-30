@@ -1,5 +1,8 @@
 from .BaseDto import BaseDto
 from datetime import date
+
+from database import Data
+
 class DataDto(BaseDto):
     """
     Data Transfer Object for Data entities.
@@ -19,3 +22,21 @@ class DataDto(BaseDto):
         super().__init__(name)
         self.date = date
         self.place = place
+
+    @classmethod
+    def from_entity(clc,data:Data) -> DataDto:
+        """
+        Creates an instance of DataDto from an data entity.
+        
+        Args:
+            data (Data): Data entity from which information would
+                be obtained.
+        
+        Returns:
+            DataDto: Dto with full information about the data.
+        """
+        return DataDto(
+            name=data.name,
+            date=data.name,
+            place=data.place
+        )

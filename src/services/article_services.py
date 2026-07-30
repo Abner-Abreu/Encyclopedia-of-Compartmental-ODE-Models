@@ -2,11 +2,12 @@ from peewee import DoesNotExist, IntegrityError
 
 from database import (Model,
                       Article,
-                      ModelArticle,
                       db)
 
 from dtos import (ArticleDto,
-                  ModelDto)
+                  ModelDto,
+                  SituationDto,
+                  DataDto)
 
 import logging
 
@@ -79,13 +80,9 @@ class ArticleService(BaseServices):
         query = Article.select()
         query = query.order_by(Article.name.asc())
 
-        result = []
+        result = list()
         for res in query:
-            result.append(ArticleDto(
-                name=res.name,
-                author=res.author,
-                date=res.date  # Fixed: was res.author incorrectly
-            ))
+            result.append(ArticleDto.from_entity(res))
 
         return result
 
@@ -128,8 +125,8 @@ class ArticleService(BaseServices):
 
         with db.atomic():
             # Delete all relationships first
-            ModelArticle.delete().where(
-                ModelArticle.article == article
+            Model.delete().where(
+                Model.article == article
             ).execute()
 
             # Delete the article itself
@@ -154,44 +151,12 @@ class ArticleService(BaseServices):
         """
         article = self.get_by_id(name)
 
-        query = (ModelArticle
-                 .select(ModelArticle, Model)
-                 .join(Model)
-                 .where(ModelArticle.article == article))
+        query = (Model
+                 .select()
+                 .where(Model.article == article))
 
-        return [
-            ModelDto(name=rel.model.name)
-            for rel in query
-        ]
+        result = list()
+        for res in query:
+            result.append(ModelDto.from_entity(res))
 
-    def set_relation_to_model(self, modelName: str, articleName: str):
-        """
-        Creates a relationship between a model and an article.
-
-        This method adds an entry to the ModelArticle junction table,
-        establishing a relationship between the specified
-        model and article. The model and article must both exist.
-
-        Args:
-            modelName: The unique identifier of the model.
-            articleName: The unique identifier of the article.
-
-        Returns:
-            ModelArticle: The created ModelArticle relationship instance.
-
-        Raises:
-            ValueError: If the relationship cannot be created (e.g.,
-                duplicate relationship or one of the entities does not exist).
-        """
-        try:
-            model_article = ModelArticle.create(
-                model=modelName,
-                article=articleName
-            )
-            logger.info(f"Relation Model: {modelName} - Article: {articleName} created")
-
-            return model_article
-
-        except IntegrityError as e:
-            logger.error(f"Error when creating relation Model: {modelName} - Article: {articleName}: {e}")
-            raise ValueError(f"A relation Model: {modelName} - Article: {articleName} cannot be created")
+        return result

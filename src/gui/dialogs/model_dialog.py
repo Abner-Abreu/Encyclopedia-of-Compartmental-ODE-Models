@@ -476,15 +476,15 @@ class ModelDialog:
             entry_meaning = tk.Entry(frame, font=FONTS['normal'], width=25)
             entry_meaning.pack(fill='x', pady=(0, 3))
 
-            tk.Label(
+            entry_linear = tk.BooleanVar(value=False)
+
+            tk.Checkbutton(
                 frame,
                 text="Linear (True/False):",
+                variable=entry_linear,
                 font=FONTS['normal'],
                 bg=COLORS['background']
             ).pack(anchor='w')
-
-            entry_linear = tk.Entry(frame, font=FONTS['normal'], width=25)
-            entry_linear.pack(fill='x')
 
             self.parameters_entries.append({
                 'name': entry_name,
@@ -526,10 +526,8 @@ class ModelDialog:
             name = entry['name'].get().strip()
             symbol = entry['symbol'].get().strip()
             meaning = entry['meaning'].get().strip()
-            linear_str = entry['linear'].get().strip().lower()
+            linear = entry['linear'].get()
 
-            # Convert linear string to boolean
-            linear = linear_str in ('true', 'yes', '1', 'si')
 
             parameters.append(
                 ParamInfoDto(name=name,

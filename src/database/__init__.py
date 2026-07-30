@@ -1,8 +1,5 @@
-from .model_article import ModelArticle
 from .model_compartment import ModelCompartment
-from .model_data import ModelData
 from .model_param import ModelParam
-from .model_situation import ModelSituation
 
 from .article import Article
 from .compartment import Compartment
@@ -17,7 +14,6 @@ __all__ = [
     'Article', 'Compartment',
     'Data', 'Model',
     'Param', 'Situation',
-    'ModelArticle', 'ModelCompartment',
-    'ModelData', 'ModelParam', 
-    'ModelSituation', 'db', 'init_db'
+    'ModelParam', 'ModelSituation', 
+    'db', 'init_db'
 ]

@@ -3,14 +3,8 @@ from peewee import DoesNotExist, IntegrityError, fn, JOIN
 from database import (Model,
                       Compartment, 
                       Param,
-                      Situation,
-                      Data,
-                      Article,
-                      ModelArticle,
                       ModelCompartment,
-                      ModelData,
                       ModelParam,
-                      ModelSituation,
                       db)
 
 from dtos import (ArticleDto,
@@ -36,7 +30,11 @@ class ModelService(BaseServices):
     compartments, parameters (with metadata), article, situation, and data.
     """
 
-    def create(self, name: str):
+    def create(self, 
+               name: str,
+               situation: str,
+               article: str,
+               data: str | None) -> Model:
         """
         Creates a new model.
 
@@ -50,7 +48,10 @@ class ModelService(BaseServices):
             ValueError: If a model with the same name already exists.
         """
         try:
-            model = Model.create(name=name)
+            model = Model.create(name=name,
+                                 situation=situation,
+                                 article=article,
+                                 data=data)
             logger.info(f"Model created: {name}")
 
             return model
@@ -125,18 +126,10 @@ class ModelService(BaseServices):
                 query = query.where(Model.name.in_(subquery))
 
             if filters.situation_contains:
-                subquery = (ModelSituation
-                            .select(ModelSituation.model)
-                            .join(Situation, JOIN.LEFT_OUTER)
-                            .where(Situation.name.contains(filters.situation_contains)))
-                query = query.where(Model.name.in_(subquery))
+                query = query.where(Model.situation.contains(filters.situation_contains))
 
             if filters.article_contains:
-                subquery = (ModelArticle
-                            .select(ModelArticle.model)
-                            .join(Article, JOIN.LEFT_OUTER)
-                            .where(Article.name.contains(filters.article_contains)))
-                query = query.where(Model.name.in_(subquery))
+                query = query.where(Model.article.contains(filters.article_contains))
 
             if filters.all_linear:
                 query = query.where(~fn.EXISTS(
@@ -148,9 +141,9 @@ class ModelService(BaseServices):
 
         query = query.order_by(Model.name.asc())
 
-        result = []
+        result = list()
         for res in query:
-            result.append(ModelDto(name=res.name))
+            result.append(ModelDto.from_entity(res))
 
         return result
 
@@ -199,15 +192,6 @@ class ModelService(BaseServices):
             ModelParam.delete().where(
                 ModelParam.model == model
             ).execute()
-            ModelArticle.delete().where(
-                ModelArticle.model == model
-            ).execute()
-            ModelSituation.delete().where(
-                ModelSituation.model == model
-            ).execute()
-            ModelData.delete().where(
-                ModelData.model == model
-            ).execute()
 
             model.delete_instance()
 
@@ -237,10 +221,7 @@ class ModelService(BaseServices):
 
         result = []
         for res in query:
-            result.append(CompartmentDto(
-                name=res.compartment.name,
-                expression=res.compartment.expression
-            ))
+            result.append(CompartmentDto.from_entity(res.compartment))
         return result
 
     def get_params(self, name: str) -> list[ParamInfoDto]:
@@ -269,82 +250,44 @@ class ModelService(BaseServices):
 
         result = []
         for res in query:
-            result.append(ParamInfoDto(
-                name=res.param.name,
-                linear=res.linear,
-                symbol=res.symbol,
-                meaning=res.meaning
-            ))
+            result.append(ParamInfoDto.from_entity(res))
         return result
 
-    def get_article(self, name: str) -> ArticleDto | None:
+    def get_article(self, name: str) -> ArticleDto:
         """
         Retrieves the article associated with a model.
 
-        Since a model can have multiple articles through the many-to-many
-        relationship, this method returns the first one found (if any).
-
         Args:
             name: The unique identifier of the model.
 
         Returns:
-            ArticleDto | None: The ArticleDto representing the associated
-                article, or None if no article is associated.
+            ArticleDto: The ArticleDto representing the associated
+                article.
 
         Raises:
             ValueError: If no model is found with the given name.
         """
         model = self.get_by_id(name)
+        
+        return ArticleDto.from_entity(model.article)
 
-        query = (ModelArticle
-                 .select(ModelArticle, Article)
-                 .join(Article)
-                 .where(ModelArticle.model == model))
-
-        query = list(query)
-        if len(query) > 0:
-            result = query[0]
-            return ArticleDto(
-                name=result.article.name,
-                author=result.article.author,
-                date=result.article.date
-            )
-        else:
-            return None
-
-    def get_situation(self, name: str) -> SituationDto | None:
+    def get_situation(self, name: str) -> SituationDto:
         """
         Retrieves the situation associated with a model.
 
-        Since a model can have multiple situations through the many-to-many
-        relationship, this method returns the first one found (if any).
-
         Args:
             name: The unique identifier of the model.
 
         Returns:
-            SituationDto | None: The SituationDto representing the associated
-                situation, or None if no situation is associated.
+            SituationDto: The SituationDto representing the associated
+                situation.
 
         Raises:
             ValueError: If no model is found with the given name.
         """
         model = self.get_by_id(name)
 
-        query = (ModelSituation
-                 .select(ModelSituation, Situation)
-                 .join(Situation)
-                 .where(ModelSituation.model == model))
-
-        query = list(query)
-        if len(query) > 0:
-            result = query[0]
-            return SituationDto(
-                name=result.situation.name,
-                description=result.situation.description
-            )
-        else:
-            return None
+        return SituationDto.from_entity(model.situation)
 
     def get_data(self, name: str) -> DataDto | None:
         """
@@ -358,26 +301,15 @@ class ModelService(BaseServices):
 
         Returns:
             DataDto | None: The DataDto representing the associated data
-                entry, or None if no data entry is associated.
+                entry or None if there is no associated data
 
         Raises:
             ValueError: If no model is found with the given name.
         """
         model = self.get_by_id(name)
 
-        query = (ModelData
-                 .select(ModelData, Data)
-                 .join(Data)
-                 .where(ModelData.model == model))
-
-        query = list(query)
-        if len(query) > 0:
-            result = query[0]
-            return DataDto(
-                name=result.data.name,
-                date=result.data.date,
-                place=result.data.place
-            )
+        if model.data:
+            return DataDto.from_entity(model.data)
         else:
             return None
 

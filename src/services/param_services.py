@@ -80,9 +80,9 @@ class ParamService(BaseServices):
         query = Param.select()
         query = query.order_by(Param.name.asc())
 
-        result = []
+        result = list()
         for res in query:
-            result.append(ParamDto(name=res.name))
+            result.append(ParamDto.from_entity(res))
 
         return result
 
@@ -149,10 +149,11 @@ class ParamService(BaseServices):
                  .join(Model)
                  .where(ModelParam.param == param))
 
-        return [
-            ModelDto(name=rel.model.name)
-            for rel in query
-        ]
+        result = list()
+        for res in query:
+            result.append(ModelDto.from_entity(res.model))
+
+        return result
 
     def set_relation_to_model(self,
                               modelName: str,

@@ -6,6 +6,8 @@ from .situation_services import SituationService
 from .validation_services import ValidationService
 from .compartment_services import CompartmentService
 
+from database import db
+
 from dtos import ModelInfoDto
 import logging
 
@@ -56,12 +58,12 @@ class ServiceHandler:
         Creates a complete model with all its associated entities.
 
         This method orchestrates the creation of a model and all its
-        related entities in the correct order. It follows these steps:
-            1. Validates all input data using ValidationService
-            2. Creates the model
-            3. Creates or retrieves the article and links it to the model
-            4. Creates or retrieves the situation and links it to the model
-            5. Creates or retrieves the data (if provided) and links it
+        related entities in the correct order. It follows these steps: \n
+            1. Validates all input data using ValidationService 
+            2. Creates or retrieves the article and links it to the model
+            3. Creates or retrieves the situation and links it to the model
+            4. Creates or retrieves the data (if provided) and links it
+            5. Creates the model
             6. Creates or retrieves all compartments and links them
             7. Creates or retrieves all parameters and links them
 
@@ -81,87 +83,77 @@ class ServiceHandler:
             logger.error(f"Model {model_info.name} not created: Validation Error")
             return False
 
-        # Model
-        try:
-            self.model.create(model_info.name)
-        except Exception:
-            logger.error(f"Model {model_info.name} already exists")
-            return False
-
-        # Article
-        try:
-            self.article.get_by_id(model_info.article.name)
-        except Exception:
-            self.article.create(
-                name=model_info.article.name,
-                author=model_info.article.author,
-                date=model_info.article.date
-            )
-
-        self.article.set_relation_to_model(
-            modelName=model_info.name,
-            articleName=model_info.article.name
-        )
-
-        # Situation
-        try:
-            self.situation.get_by_id(model_info.situation.name)
-        except Exception:
-            self.situation.create(
-                name=model_info.situation.name,
-                description=model_info.situation.description
-            )
-
-        self.situation.set_relation_to_model(
-            modelName=model_info.name,
-            situationName=model_info.situation.name
-        )
-
-        # Data (optional)
-        if model_info.data:
+        with db.atomic():
+            # Article
             try:
-                self.data.get_by_id(model_info.data.name)
+                self.article.get_by_id(model_info.article.name)
             except Exception:
-                self.data.create(
-                    name=model_info.data.name,
-                    place=model_info.data.place,
-                    date=model_info.data.date
+                self.article.create(
+                    name=model_info.article.name,
+                    author=model_info.article.author,
+                    date=model_info.article.date
                 )
 
-            self.data.set_relation_to_model(
-                modelName=model_info.name,
-                dataName=model_info.data.name
-            )
-
-        # Compartments
-        for comp in model_info.compartments:
+            # Situation
             try:
-                self.compartment.get_by_id(comp.name)
+                self.situation.get_by_id(model_info.situation.name)
             except Exception:
-                self.compartment.create(
-                    name=comp.name,
-                    expression=comp.expression
+                self.situation.create(
+                    name=model_info.situation.name,
+                    description=model_info.situation.description
                 )
 
-            self.compartment.set_relation_to_model(
-                modelName=model_info.name,
-                compartmentName=comp.name
-            )
+            # Data (optional)
+            if model_info.data:
+                try:
+                    self.data.get_by_id(model_info.data.name)
+                except Exception:
+                    self.data.create(
+                        name=model_info.data.name,
+                        place=model_info.data.place,
+                        date=model_info.data.date
+                    )
 
-        # Parameters
-        for par in model_info.params:
+            # Model
             try:
-                self.param.get_by_id(par.name)
+                self.model.create(name=model_info.name,
+                                  situation=model_info.situation.name,
+                                  article=model_info.article.name,
+                                  data=model_info.data.name)
             except Exception:
-                self.param.create(name=par.name)
+                logger.error(f"Model {model_info.name} already exists")
+                return False
 
-            self.param.set_relation_to_model(
-                modelName=model_info.name,
-                paramName=par.name,
-                linear=par.linear,
-                meaning=par.meaning,
-                symbol=par.symbol
-            )
+            # Compartments
+            for comp in model_info.compartments:
+                try:
+                    self.compartment.get_by_id(comp.name)
+                except Exception:
+                    self.compartment.create(
+                        name=comp.name,
+                        expression=comp.expression
+                    )
 
-        logger.info(f"Model {model_info.name} created")
-        return True
+                self.compartment.set_relation_to_model(
+                    modelName=model_info.name,
+                    compartmentName=comp.name
+                )
+
+            # Parameters
+            for par in model_info.params:
+                try:
+                    self.param.get_by_id(par.name)
+                except Exception:
+                    self.param.create(name=par.name)
+
+                self.param.set_relation_to_model(
+                    modelName=model_info.name,
+                    paramName=par.name,
+                    linear=par.linear,
+                    meaning=par.meaning,
+                    symbol=par.symbol
+                )
+
+            logger.info(f"Model {model_info.name} created")
+            return True
+        return False

@@ -1,11 +1,13 @@
-from .BaseDto import BaseDto
 from .ArticleDto import ArticleDto
 from .CompartmentDto import CompartmentDto
 from .DataDto import DataDto
 from .ParamInfoDto import ParamInfoDto
 from .SituationDto import SituationDto
+from .ModelDto import ModelDto
 
-class ModelInfoDto(BaseDto):
+from database import ModelParam,Compartment, Model
+
+class ModelInfoDto(ModelDto):
     """
     Data Transfer Object for complete model information.
 
@@ -43,9 +45,50 @@ class ModelInfoDto(BaseDto):
                  article: ArticleDto,
                  data: DataDto | None
                  ):
-        super().__init__(name)
+        super().__init__(name=name,
+                         situation=situation,
+                         article=article,
+                         data=data)
         self.compartments = compartments
         self.params = params
-        self.situation = situation
-        self.article = article
-        self.data = data
+
+    @classmethod
+    def from_entity(clc, model: Model, 
+                    compartments: list[Compartment],
+                    params: list[ModelParam]) -> ModelInfoDto:
+        """
+        Creates an instance of ModelInfoDto from database entities.
+        
+        Args:
+            model (Model): Model entity from which information would
+                be obtained.
+            compartments (list[Compartment]): List of compartments 
+                associated to model.
+            params (list[Params]): List of params associated to 
+                model.
+        
+        Returns:
+            ModelInfoDto: Dto with full information about the model.
+
+        Note:
+            Article, Situation and Data attributes are obtained
+            directly from the model arg.
+        """
+
+        if model.data:
+            data = DataDto.from_entity(model.data)
+        else:
+            data = None
+
+        return ModelInfoDto(
+            name=model.name,
+            compartments=[{
+                CompartmentDto.from_entity(comp)
+            }for comp in compartments],
+            params=[{
+                ParamInfoDto.from_entity(param)
+            }for param in params],
+            article=ArticleDto.from_entity(model.article),
+            situation=SituationDto.from_entity(model.situation),
+            data=data
+        )

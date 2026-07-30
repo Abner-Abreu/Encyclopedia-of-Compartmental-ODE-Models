@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 class BaseDto(ABC):
     """
@@ -14,3 +14,11 @@ class BaseDto(ABC):
     """
     def __init__(self, name:str):
         self.name = name
+
+    @classmethod
+    @abstractmethod
+    def from_entity():
+        """
+        Creates an instance of Dto from a database entity.
+        """
+        pass

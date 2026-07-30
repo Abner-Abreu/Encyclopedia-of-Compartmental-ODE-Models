@@ -1,6 +1,8 @@
-from .BaseDto import BaseDto
+from .ParamDto import ParamDto
 
-class ParamInfoDto(BaseDto):
+from database import Param, ModelParam
+
+class ParamInfoDto(ParamDto):
     """
     Data Transfer Object for parameter information within a model context.
 
@@ -17,7 +19,7 @@ class ParamInfoDto(BaseDto):
         name (str): Unique identifier of the parameter (inherited from BaseDto).
         linear (bool): Indicates whether the model is linear with respect
             to this parameter.
-        symbol (str): LaTeX symbol representing the parameter in the
+        symbol (str): Symbol representing the parameter in the
             context of this model (e.g., '\\alpha', '\\omega_0').
         meaning (str): Physical or mathematical description of the
             parameter's meaning in the context of this model.
@@ -31,3 +33,23 @@ class ParamInfoDto(BaseDto):
         self.linear = linear
         self.symbol = symbol
         self.meaning = meaning
+
+    @classmethod
+    def from_entity(clc,relationship: ModelParam) -> ParamInfoDto:
+        """
+        Creates an instance of ParamInfoDto from an ModelParam entity.
+        
+        Args:
+            relationship (ModelParam): ModelParam entity from which 
+                information would be obtained.
+        
+        Returns:
+            ParamInfoDto: Dto with full information about the param and 
+                its relation with a model.
+        """
+        return ParamInfoDto(
+            name=relationship.param.name,
+            linear=relationship.linear,
+            symbol=relationship.symbol,
+            meaning=relationship.meaning
+        )
