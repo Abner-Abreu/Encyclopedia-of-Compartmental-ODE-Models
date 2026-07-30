@@ -1,5 +1,7 @@
 from .ParamDto import ParamDto
 
+from database import Param, ModelParam
+
 class ParamInfoDto(ParamDto):
     """
     Data Transfer Object for parameter information within a model context.
@@ -31,3 +33,23 @@ class ParamInfoDto(ParamDto):
         self.linear = linear
         self.symbol = symbol
         self.meaning = meaning
+
+    @classmethod
+    def from_entity(clc,relationship: ModelParam) -> ParamInfoDto:
+        """
+        Creates an instance of ParamInfoDto from an ModelParam entity.
+        
+        Args:
+            relationship (ModelParam): ModelParam entity from which 
+                information would be obtained.
+        
+        Returns:
+            ParamInfoDto: Dto with full information about the param and 
+                its relation with a model.
+        """
+        return ParamInfoDto(
+            name=relationship.param.name,
+            linear=relationship.linear,
+            symbol=relationship.symbol,
+            meaning=relationship.meaning
+        )
