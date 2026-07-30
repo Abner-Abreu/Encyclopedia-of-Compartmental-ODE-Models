@@ -81,13 +81,9 @@ class DataService(BaseServices):
         query = Data.select()
         query = query.order_by(Data.name.asc())
 
-        result = []
+        result = list()
         for res in query:
-            result.append(DataDto(
-                name=res.name,
-                date=res.date,
-                place=res.place
-            ))
+            result.append(DataDto.from_entity(res))
 
         return result
 
@@ -152,29 +148,9 @@ class DataService(BaseServices):
         query = (Model
                  .select()
                  .where(Model.data == data))
-        
-        dataDto = DataDto(
-            name=data.name,
-            date=data.date,
-            place=data.place
-        )
 
         result = list()
         for res in query:
-            situationDto = SituationDto(
-                name=res.situation.name,
-                description=res.situation.description
-            )
-            articleDto = ArticleDto(
-                name=res.article.name,
-                author=res.article.author,
-                date=res.article.date
-            )
-            result.append(ModelDto(
-                name=res.name,
-                situation=situationDto,
-                article=articleDto,
-                data=dataDto
-                ))
+            result.append(ModelDto.from_entity(res))
 
         return result

@@ -80,13 +80,9 @@ class ArticleService(BaseServices):
         query = Article.select()
         query = query.order_by(Article.name.asc())
 
-        result = []
+        result = list()
         for res in query:
-            result.append(ArticleDto(
-                name=res.name,
-                author=res.author,
-                date=res.date 
-            ))
+            result.append(ArticleDto.from_entity(res))
 
         return result
 
@@ -158,29 +154,9 @@ class ArticleService(BaseServices):
         query = (Model
                  .select()
                  .where(Model.article == article))
-        
-        articleDto = ArticleDto.from_article(article=article)
 
         result = list()
         for res in query:
-            situationDto = SituationDto(
-                name=res.situation.name,
-                description=res.situation.description
-            )
-            if res.data:
-                dataDto = DataDto(
-                    name=res.data.name,
-                    date=res.data.date,
-                    place=res.data.place
-                )
-            else:
-                dataDto = None
-            
-            result.append(ModelDto(
-                name=res.name,
-                situation=situationDto,
-                article=articleDto,
-                data=dataDto
-                ))
+            result.append(ModelDto.from_entity(res))
 
         return result

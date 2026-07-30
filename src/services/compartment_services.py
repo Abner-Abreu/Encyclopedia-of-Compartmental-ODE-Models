@@ -80,12 +80,9 @@ class CompartmentService(BaseServices):
         query = Compartment.select()
         query = query.order_by(Compartment.name.asc())
 
-        result = []
+        result = list()
         for res in query:
-            result.append(CompartmentDto(
-                name=res.name,
-                expression=res.expression
-            ))
+            result.append(CompartmentDto.from_entity(res))
 
         return result
 
@@ -159,10 +156,11 @@ class CompartmentService(BaseServices):
                  .join(Model)
                  .where(ModelCompartment.compartment == compartment))
 
-        return [
-            ModelDto(name=rel.model.name)
-            for rel in query
-        ]
+        result = list()
+        for res in query:
+            result.append(ModelDto.from_entity(res.model))
+        
+        return result
 
     def set_relation_to_model(self, modelName: str, compartmentName: str):
         """

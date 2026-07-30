@@ -141,31 +141,9 @@ class ModelService(BaseServices):
 
         query = query.order_by(Model.name.asc())
 
-        result = []
+        result = list()
         for res in query:
-            situation = SituationDto(
-                name=res.situation.name,
-                description=res.situation.description
-            )
-            article = ArticleDto(
-                name=res.article.name,
-                author=res.article.author,
-                date=res.article.date
-            )
-            if res.data:
-                data = DataDto(
-                    name=res.data.name,
-                    date=res.data.date,
-                    place=res.data.place
-                )
-            else:
-                data = None
-                
-            result.append(ModelDto(
-                name=res.name,
-                situation=situation,
-                article=article,
-                data=data))
+            result.append(ModelDto.from_entity(res))
 
         return result
 
@@ -243,10 +221,7 @@ class ModelService(BaseServices):
 
         result = []
         for res in query:
-            result.append(CompartmentDto(
-                name=res.compartment.name,
-                expression=res.compartment.expression
-            ))
+            result.append(CompartmentDto.from_entity(res.compartment))
         return result
 
     def get_params(self, name: str) -> list[ParamInfoDto]:
@@ -275,12 +250,7 @@ class ModelService(BaseServices):
 
         result = []
         for res in query:
-            result.append(ParamInfoDto(
-                name=res.param.name,
-                linear=res.linear,
-                symbol=res.symbol,
-                meaning=res.meaning
-            ))
+            result.append(ParamInfoDto.from_entity(res))
         return result
 
     def get_article(self, name: str) -> ArticleDto:
@@ -299,9 +269,7 @@ class ModelService(BaseServices):
         """
         model = self.get_by_id(name)
         
-        return ArticleDto(name=model.article.name,
-                          author=model.article.author,
-                          date=model.article.date)
+        return ArticleDto.from_entity(model.article)
 
     def get_situation(self, name: str) -> SituationDto:
         """
@@ -319,8 +287,7 @@ class ModelService(BaseServices):
         """
         model = self.get_by_id(name)
 
-        return SituationDto(name=model.situation.name,
-                            description=model.situation.description)
+        return SituationDto.from_entity(model.situation)
 
     def get_data(self, name: str) -> DataDto | None:
         """
@@ -342,9 +309,7 @@ class ModelService(BaseServices):
         model = self.get_by_id(name)
 
         if model.data:
-            return DataDto(name=model.data.name,
-                           date=model.data.date,
-                           place=model.data.place)
+            return DataDto.from_entity(model.data)
         else:
             return None
 
