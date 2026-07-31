@@ -34,11 +34,11 @@ python main.py
 
 ## Database Location
 
-The database file (`encyclopedia.db`) is automatically created in your **Documents folder** inside a directory named `EncyclopediaODEModels`:
+The database file (`encyclopedia.db`) is automatically created in your **Documents folder** inside a directory named `Encyclopedia Of Compartmental ODE Models`:
 
-- **Windows**: `C:\Users\<YourUser>\Documents\EncyclopediaODEModels\`
-- **macOS**: `/Users/<YourUser>/Documents/EncyclopediaODEModels/`
-- **Linux**: `/home/<YourUser>/Documents/EncyclopediaODEModels/`
+- **Windows**: `C:\Users\<YourUser>\Documents\Encyclopedia Of Compartmental ODE Models\`
+- **macOS**: `/Users/<YourUser>/Documents/Encyclopedia Of Compartmental ODE Models/`
+- **Linux**: `/home/<YourUser>/Documents/Encyclopedia Of Compartmental ODE Models/`
 
 > [!NOTE]
 > The database is created automatically on first run. No manual setup is required.
