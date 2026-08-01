@@ -130,13 +130,13 @@ class ServiceHandler:
                     self.compartment.get_by_id(comp.name)
                 except Exception:
                     self.compartment.create(
-                        name=comp.name,
-                        expression=comp.expression
+                        name=comp.name
                     )
 
                 self.compartment.set_relation_to_model(
                     modelName=model_info.name,
-                    compartmentName=comp.name
+                    compartmentName=comp.name,
+                    expression=comp.expression
                 )
 
             # Parameters

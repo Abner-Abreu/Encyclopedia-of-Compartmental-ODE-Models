@@ -23,14 +23,12 @@ class CompartmentService(BaseServices):
     and models through the ModelCompartment junction table.
     """
 
-    def create(self, name: str, expression: str):
+    def create(self, name: str):
         """
         Creates a new compartment.
 
         Args:
             name: Unique identifier of the compartment (primary key).
-            expression: Mathematical expression defining the compartment's
-                behavior or state in LaTeX notation.
 
         Returns:
             Compartment: The created Compartment instance.
@@ -39,7 +37,7 @@ class CompartmentService(BaseServices):
             ValueError: If a compartment with the same name already exists.
         """
         try:
-            compartment = Compartment.create(name=name, expression=expression)
+            compartment = Compartment.create(name=name)
             logger.info(f"Compartment created: {name}")
 
             return compartment
@@ -77,8 +75,8 @@ class CompartmentService(BaseServices):
             list[CompartmentDto]: A list of CompartmentDto objects representing
                 all compartments in the system.
         """
-        query = Compartment.select()
-        query = query.order_by(Compartment.name.asc())
+        query = ModelCompartment.select()
+        query = query.order_by(ModelCompartment.compartment.asc())
 
         result = list()
         for res in query:
@@ -162,7 +160,9 @@ class CompartmentService(BaseServices):
         
         return result
 
-    def set_relation_to_model(self, modelName: str, compartmentName: str):
+    def set_relation_to_model(self, modelName: str, 
+                              compartmentName: str,
+                              expression: str):
         """
         Creates a relationship between a model and a compartment.
 
@@ -184,7 +184,8 @@ class CompartmentService(BaseServices):
         try:
             model_compartment = ModelCompartment.create(
                 model=modelName,
-                compartment=compartmentName
+                compartment=compartmentName,
+                expression=expression
             )
             logger.info(f"Relation Model: {modelName} - Compartment: {compartmentName} created")
 
