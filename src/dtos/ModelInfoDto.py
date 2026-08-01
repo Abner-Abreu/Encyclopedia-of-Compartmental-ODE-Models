@@ -5,7 +5,7 @@ from .ParamInfoDto import ParamInfoDto
 from .SituationDto import SituationDto
 from .ModelDto import ModelDto
 
-from database import ModelParam,Compartment, Model
+from database import ModelParam,ModelCompartment, Model
 
 class ModelInfoDto(ModelDto):
     """
@@ -54,7 +54,7 @@ class ModelInfoDto(ModelDto):
 
     @classmethod
     def from_entity(clc, model: Model, 
-                    compartments: list[Compartment],
+                    compartments: list[ModelCompartment],
                     params: list[ModelParam]) -> ModelInfoDto:
         """
         Creates an instance of ModelInfoDto from database entities.
