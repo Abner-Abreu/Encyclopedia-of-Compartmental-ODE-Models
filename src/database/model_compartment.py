@@ -1,4 +1,4 @@
-from peewee import ForeignKeyField,CompositeKey
+from peewee import ForeignKeyField,CompositeKey,TextField
 from .base import BaseModel
 from .model import Model
 from .compartment import Compartment
@@ -16,6 +16,8 @@ class ModelCompartment(BaseModel):
     Attributes:
         model (ForeignKeyField): Reference to the associated Model.
         compartment (ForeignKeyField): Reference to the associated Compartment.
+        expression (str): Mathemathical expression of the Compartment in for 
+            that model.
 
     Relationships:
         - model.backref 'compartments': Access to all compartments
@@ -30,6 +32,7 @@ class ModelCompartment(BaseModel):
     """
     model = ForeignKeyField(Model, backref='compartments')
     compartment = ForeignKeyField(Compartment, backref='models')
+    expression = TextField()
     
     class Meta:
         primary_key = CompositeKey('model', 'compartment')
