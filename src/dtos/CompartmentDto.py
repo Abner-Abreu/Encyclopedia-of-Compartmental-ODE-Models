@@ -1,6 +1,6 @@
 from .BaseDto import BaseDto
 
-from database import Compartment
+from database import ModelCompartment
 
 class CompartmentDto(BaseDto):
     """
@@ -21,18 +21,18 @@ class CompartmentDto(BaseDto):
         self.expression = expression
     
     @classmethod
-    def from_entity(clc,compartment: Compartment) -> CompartmentDto:
+    def from_entity(clc,modelCompartment: ModelCompartment) -> CompartmentDto:
         """
         Creates an instance of CompartmentDto from a Compartment entity.
         
         Args:
-            compartment (Compartment): Compartment entity from which information would
-                be obtained.
+            modelCompartment (ModelCompartment): relation from which information 
+                would be obtained.
         
         Returns:
             CompartmentDto: Dto with full information about the compartment.
         """
         return CompartmentDto(
-            name=compartment.name,
-            expression=compartment.expression
+            name=modelCompartment.compartment,
+            expression=modelCompartment.expression
         )

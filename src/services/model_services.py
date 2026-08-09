@@ -221,7 +221,7 @@ class ModelService(BaseServices):
 
         result = []
         for res in query:
-            result.append(CompartmentDto.from_entity(res.compartment))
+            result.append(CompartmentDto.from_entity(res))
         return result
 
     def get_params(self, name: str) -> list[ParamInfoDto]:

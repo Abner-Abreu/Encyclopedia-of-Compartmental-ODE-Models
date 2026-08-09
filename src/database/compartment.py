@@ -1,4 +1,4 @@
-from peewee import CharField, TextField
+from peewee import CharField
 from .base import BaseModel
 
 class Compartment(BaseModel):
@@ -11,10 +11,8 @@ class Compartment(BaseModel):
 
     Attributes:
         name (str): Unique identifier and primary key of the compartment.
-        expression (str): Mathemathical expression of the compartment
     """
     name = CharField(max_length=100, primary_key=True)
-    expression = TextField()
     
     def __str__(self):
         """
