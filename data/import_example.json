@@ -1,0 +1,35 @@
+{
+    "models": [
+        {
+            "name": "MOD_FISICA_001",
+            "situation": {
+                "name": "SITUATION_001",
+                "description": "Initial conditions"
+            },
+            "article": {
+                "name": "ARTICLE_001",
+                "author": "García, M.",
+                "date": "2024-01-15"
+            },
+            "compartments": [
+                {
+                    "name": "COMPARTMENT_01",
+                    "expression": "dV/dt = Q_in - Q_out"
+                }
+            ],
+            "params": [
+                {
+                    "name": "PARM_VELOCITY",
+                    "linear": true,
+                    "symbol": "v",
+                    "meaning": "Fluid velocity"
+                }
+            ],
+            "data": {
+                "name": "DATASET_001",
+                "place": "Laboratory 3",
+                "date": "2024-01-20"
+            }
+        }
+    ]
+}
