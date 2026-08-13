@@ -1,4 +1,4 @@
-from peewee import CharField, DateTimeField
+from peewee import CharField, DateField
 from .base import BaseModel
 
 class Article(BaseModel):
@@ -16,7 +16,7 @@ class Article(BaseModel):
     """
     name = CharField(max_length=100, primary_key=True)
     author = CharField(max_length=100)
-    date = DateTimeField()
+    date = DateField()
     
     def __str__(self):
         """
