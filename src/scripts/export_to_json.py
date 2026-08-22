@@ -1,4 +1,3 @@
-# src/scripts/export_to_json.py
 import sys
 import json
 import logging
