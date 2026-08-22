@@ -33,6 +33,6 @@ class CompartmentDto(BaseDto):
             CompartmentDto: Dto with full information about the compartment.
         """
         return CompartmentDto(
-            name=modelCompartment.compartment,
+            name=modelCompartment.compartment.name,
             expression=modelCompartment.expression
         )

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 import logging
 
 from dtos import (ModelInfoDto,
@@ -42,7 +42,7 @@ class ValidationService:
     MAX_NAME_SIZE = 100
 
     # Date validation constants
-    MAX_DATE = datetime.today()
+    MAX_DATE = date.today()
 
     def IsValidModelInfo(self, model_info: ModelInfoDto) -> bool:
         """
@@ -175,7 +175,7 @@ class ValidationService:
         logger.info(f"Name '{name}' is valid")
         return True
 
-    def IsValidDate(self, date: datetime) -> bool:
+    def IsValidDate(self, date: date) -> bool:
         """
         Validates a date against business rules.
 

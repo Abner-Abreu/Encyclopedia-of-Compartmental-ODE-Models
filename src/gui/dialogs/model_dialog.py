@@ -12,7 +12,7 @@ from dtos import (ModelInfoDto,
                   DataDto,
                   ArticleDto)
 
-from datetime import datetime
+from datetime import date
 
 class ModelDialog:
     """
@@ -600,14 +600,14 @@ class ModelDialog:
 
         article_name = self.entry_article_name.get().strip()
         article_author = self.entry_article_author.get().strip()
-        article_date = datetime.fromisoformat(self.entry_article_date.get().strip())
+        article_date = date.fromisoformat(self.entry_article_date.get().strip())
         article = ArticleDto(name=article_name,
                              author=article_author,
                              date=article_date)
 
         data_name = self.entry_data_name.get().strip()
         data_place = self.entry_data_place.get().strip()
-        data_date = datetime.fromisoformat(self.entry_data_date.get().strip())
+        data_date = date.fromisoformat(self.entry_data_date.get().strip())
 
         data = DataDto(name=data_name,
                        date=data_date,

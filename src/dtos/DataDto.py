@@ -37,6 +37,6 @@ class DataDto(BaseDto):
         """
         return DataDto(
             name=data.name,
-            date=data.name,
+            date=data.date,
             place=data.place
         )
