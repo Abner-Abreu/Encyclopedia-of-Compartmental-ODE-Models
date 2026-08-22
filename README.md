@@ -43,6 +43,87 @@ The database file (`encyclopedia.db`) is automatically created in your **Documen
 > [!NOTE]
 > The database is created automatically on first run. No manual setup is required.
 
+## Scripts de importación y exportación
+
+### Importar modelos desde JSON
+
+```bash
+python src/scripts/import_from_json.py <input_path>
+```
+
+Ejemplo:
+```bash
+python src/scripts/import_from_json.py data/import.json
+```
+#### JSON Structure for Import
+
+The JSON file must contain a "models" array with one or more model objects:
+
+```json
+{
+  "models": [
+    {
+      "name": "MODEL_NAME",
+      "situation": {
+        "name": "SIT_NAME",
+        "description": "Situation description"
+      },
+      "article": {
+        "name": "ART_NAME",
+        "author": "Author Name",
+        "date": "YYYY-MM-DD"
+      },
+      "data": {
+        "name": "DAT_NAME",
+        "place": "Location",
+        "date": "YYYY-MM-DD"
+      },
+      "compartments": [
+        {
+          "name": "COMP_NAME",
+          "expression": "Mathematical expression"
+        }
+      ],
+      "params": [
+        {
+          "name": "PARAM_NAME",
+          "linear": true,
+          "symbol": "\\alpha",
+          "meaning": "Parameter meaning"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Fields:
+- name (required): Unique model identifier
+- situation (required): Associated situation
+- article (required): Associated article
+- data (optional): Experimental data entry
+- compartments (required): List of compartments with expressions
+- params (required): List of parameters with linearity, symbol, and meaning
+
+Date format: YYYY-MM-DD (ISO 8601)
+
+> [!NOTE]
+> An example of JSON ready to import can be found in [`data/import_example.json`](data/import_example.json)
+
+### Exportar modelos a JSON
+
+```bash
+python src/scripts/export_to_json.py <output_path>
+```
+Ejemplo:
+
+```bash
+python src/scripts/export_to_json.py data/export.json
+```
+>[!NOTE]
+> The output format is similar to the input format, adding export
+> datetime and number of models
+
 ## Usage
 
 ### Adding a New Model
