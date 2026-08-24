@@ -43,87 +43,6 @@ The database file (`encyclopedia.db`) is automatically created in your **Documen
 > [!NOTE]
 > The database is created automatically on first run. No manual setup is required.
 
-## Scripts de importación y exportación
-
-### Importar modelos desde JSON
-
-```bash
-python src/scripts/import_from_json.py <input_path>
-```
-
-Ejemplo:
-```bash
-python src/scripts/import_from_json.py data/import.json
-```
-#### JSON Structure for Import
-
-The JSON file must contain a "models" array with one or more model objects:
-
-```json
-{
-  "models": [
-    {
-      "name": "MODEL_NAME",
-      "situation": {
-        "name": "SIT_NAME",
-        "description": "Situation description"
-      },
-      "article": {
-        "name": "ART_NAME",
-        "author": "Author Name",
-        "date": "YYYY-MM-DD"
-      },
-      "data": {
-        "name": "DAT_NAME",
-        "place": "Location",
-        "date": "YYYY-MM-DD"
-      },
-      "compartments": [
-        {
-          "name": "COMP_NAME",
-          "expression": "Mathematical expression"
-        }
-      ],
-      "params": [
-        {
-          "name": "PARAM_NAME",
-          "linear": true,
-          "symbol": "\\alpha",
-          "meaning": "Parameter meaning"
-        }
-      ]
-    }
-  ]
-}
-```
-
-Fields:
-- name (required): Unique model identifier
-- situation (required): Associated situation
-- article (required): Associated article
-- data (optional): Experimental data entry
-- compartments (required): List of compartments with expressions
-- params (required): List of parameters with linearity, symbol, and meaning
-
-Date format: YYYY-MM-DD (ISO 8601)
-
-> [!NOTE]
-> An example of JSON ready to import can be found in [`data/import_example.json`](data/import_example.json)
-
-### Exportar modelos a JSON
-
-```bash
-python src/scripts/export_to_json.py <output_path>
-```
-Ejemplo:
-
-```bash
-python src/scripts/export_to_json.py data/export.json
-```
->[!NOTE]
-> The output format is similar to the input format, adding export
-> datetime and number of models
-
 ## Usage
 
 ### Adding a New Model
@@ -158,6 +77,90 @@ python src/scripts/export_to_json.py data/export.json
 - **Right-click** a row for context menu options:
   - **Delete**: Remove the model and all its associations
   - **View Details**: Display complete model information
+ 
+## Import and Export Scripts
+
+Instead of entering the data manually and accessing it using the UI, you can use the scripts that are located in [`src/scripts`](src/scripts) to automate it.
+
+### Import Models from JSON
+
+```bash
+python src/scripts/import_from_json.py <input_path>
+```
+
+Example:
+```bash
+python src/scripts/import_from_json.py data/import.json
+```
+#### JSON Structure for Import
+
+The JSON file must contain a "models" array with one or more model objects:
+
+```json
+{
+  "models": [
+    {
+      "name": "MODEL_NAME",
+      "situation": {
+        "name": "SIT_NAME",
+        "description": "Description of the situation in which the model is used"
+      },
+      "article": {
+        "name": "ARTICLE_NAME",
+        "author": "Author Name",
+        "date": "YYYY-MM-DD"
+      },
+      "data": {
+        "name": "DAT_NAME",
+        "place": "Location where the data was obtained",
+        "date": "YYYY-MM-DD"
+      },
+      "compartments": [
+        {
+          "name": "COMP_NAME",
+          "expression": "Mathematical expression of the compartment for this model"
+        }
+      ],
+      "params": [
+        {
+          "name": "PARAM_NAME",
+          "linear": true,
+          "symbol": "alpha",
+          "meaning": "Parameter meaning for this model"
+        }
+      ]
+    }
+  ]
+}
+```
+
+Fields:
+- name (required): Unique model identifier
+- situation (required): Associated situation
+- article (required): Associated article
+- data (optional): Experimental data entry
+- compartments (required): List of compartments with expressions
+- params (required): List of parameters with linearity, symbol, and meaning
+
+Date format: YYYY-MM-DD (ISO 8601)
+All names must contain at least 8 characters and using ```UPPERCASE``` or ```snake_case``` is recommended except for the article title.
+
+> [!NOTE]
+> An example of JSON ready to import can be found in [`data/import_example.json`](data/import_example.json)
+
+### Export Models to JSON
+
+```bash
+python src/scripts/export_to_json.py <output_path>
+```
+Example:
+
+```bash
+python src/scripts/export_to_json.py data/export.json
+```
+>[!NOTE]
+> The output format is similar to the input format, adding export
+> datetime and number of models
 
 ## Logging
 
