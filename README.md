@@ -113,6 +113,7 @@ The JSON file must contain a "models" array with one or more model objects:
       "data": {
         "name": "DAT_NAME",
         "place": "Location where the data was obtained",
+        "source": "Source of the data, it can be a url or similar",
         "date": "YYYY-MM-DD"
       },
       "compartments": [

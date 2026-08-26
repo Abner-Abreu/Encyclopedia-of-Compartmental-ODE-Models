@@ -90,7 +90,8 @@ class JsonImporter:
             data_entry = DataDto(
                 name=data_data.get('name', 'DAT_DEFAULT'),
                 place=data_data.get('place', 'Unknown'),
-                date=self._parse_date(data_data.get('date', ''))
+                date=self._parse_date(data_data.get('date', '')),
+                source=data_data.get('source', '')
             )
         
         # Parse compartments
