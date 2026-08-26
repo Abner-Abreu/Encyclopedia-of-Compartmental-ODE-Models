@@ -14,7 +14,8 @@
       "data": {
         "name": "temperature_measurements_lab_2024",
         "place": "Laboratory of Thermodynamics, Building 3, Room 205",
-        "date": "2024-01-20"
+        "date": "2024-01-20",
+        "source": "https://doi.org/10.1234/thermodynamics.2024.001"
       },
       "compartments": [
         {
@@ -83,7 +84,8 @@
       "data": {
         "name": "concentration_measurements_cstr",
         "place": "Chemical Engineering Laboratory, Building 5, Room 112",
-        "date": "2024-02-05"
+        "date": "2024-02-05",
+        "source": "https://doi.org/10.5678/cstr.2024.002"
       },
       "compartments": [
         {
@@ -130,7 +132,8 @@
       "data": {
         "name": "daily_infection_reports_city_2024",
         "place": "Epidemiology Research Center, City Health Department",
-        "date": "2024-03-15"
+        "date": "2024-03-15",
+        "source": "https://doi.org/10.91011/epidemiology.2024.003"
       },
       "compartments": [
         {
