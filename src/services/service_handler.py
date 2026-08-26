@@ -111,7 +111,8 @@ class ServiceHandler:
                     self.data.create(
                         name=model_info.data.name,
                         place=model_info.data.place,
-                        date=model_info.data.date
+                        date=model_info.data.date,
+                        source=model_info.data.source
                     )
 
             # Model
