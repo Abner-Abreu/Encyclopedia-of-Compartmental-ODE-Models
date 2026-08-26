@@ -67,7 +67,8 @@ class JsonExporter:
             "data": {
                 "name": model_info.data.name,
                 "place": model_info.data.place,
-                "date": self._format_date(model_info.data.date)
+                "date": self._format_date(model_info.data.date),
+                "source": model_info.data.source
             } if model_info.data else None,
             "compartments": [
                 {
