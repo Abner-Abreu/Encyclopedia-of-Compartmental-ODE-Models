@@ -78,10 +78,9 @@ class ModelDialog:
         title = "New Model"
         self.window = tk.Toplevel(self.master)
         self.window.title(title)
-        self.window.geometry("1100x650")
+        self.window.geometry("1100x700")
         self.window.resizable(True, True)
         self.window.grab_set()
-        self.window.transient(self.master)
 
         self.window.update_idletasks()
         x = (self.window.winfo_screenwidth() // 2) - (1100 // 2)
@@ -254,6 +253,20 @@ class ModelDialog:
             width=30
         )
         self.entry_data_place.pack(fill='x', pady=(0, 5))
+
+        tk.Label(
+            data_frame,
+            text="Source:",
+            font=FONTS['normal'],
+            bg=COLORS['background']
+        ).pack(anchor='w')
+
+        self.entry_data_source = tk.Entry(
+            data_frame,
+            font=FONTS['normal'],
+            width=30
+        )
+        self.entry_data_source.pack(fill='x', pady=(0, 5))
 
         tk.Label(
             data_frame,
@@ -607,11 +620,13 @@ class ModelDialog:
 
         data_name = self.entry_data_name.get().strip()
         data_place = self.entry_data_place.get().strip()
+        data_source = self.entry_data_source.get().strip()
         data_date = date.fromisoformat(self.entry_data_date.get().strip())
 
         data = DataDto(name=data_name,
                        date=data_date,
-                       place=data_place)
+                       place=data_place,
+                       source=data_source)
 
         return ModelInfoDto(name=name,
                             compartments=compartments,
