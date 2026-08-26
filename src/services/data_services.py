@@ -4,10 +4,9 @@ from database import (Model,
                       Data,
                       db)
 
-from dtos import (DataDto,
-                  ModelDto,
-                  SituationDto,
-                  ArticleDto)
+from dtos import DataDto, ModelDto
+
+from datetime import date
 
 import logging
 
@@ -24,7 +23,7 @@ class DataService(BaseServices):
     and models through the ModelData junction table.
     """
 
-    def create(self, name: str, place: str, date):
+    def create(self, name: str, place: str, date: date, source: str) -> Data:
         """
         Creates a new data entry.
 
@@ -32,6 +31,7 @@ class DataService(BaseServices):
             name: Unique identifier of the data entry (primary key).
             place: Location where the data was collected.
             date: Date when the data was collected.
+            source: Source of the data set, can be a url or similar.
 
         Returns:
             Data: The created Data instance.
@@ -40,7 +40,10 @@ class DataService(BaseServices):
             ValueError: If a data entry with the same name already exists.
         """
         try:
-            data = Data.create(name=name, place=place, date=date)
+            data = Data.create(name=name, 
+                               place=place, 
+                               date=date, 
+                               source=source)
             logger.info(f"Data created: {name}")
 
             return data

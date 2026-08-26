@@ -313,6 +313,7 @@ class ModelsView:
                 details += f"    Name: {model_info.data.name} \n"
                 details += f"    Date: {model_info.data.date} \n"
                 details += f"    Place: {model_info.data.place} \n"
+                details += f"    Source: {model_info.data.source} \n"
             else:
                 details += "    No data"
 

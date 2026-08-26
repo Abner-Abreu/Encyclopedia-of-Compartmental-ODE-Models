@@ -14,14 +14,17 @@ class DataDto(BaseDto):
         name (str): Unique identifier of the data.
         date (date): Date when the data was obtained.
         place (str): Place where the data was obtained.
+        source (str): Source of the data set, can be a url or similar.
     """
     def __init__(self, 
                  name:str,
                  date:date,
-                 place:str):
+                 place:str,
+                 source:str):
         super().__init__(name)
         self.date = date
         self.place = place
+        self.source = source
 
     @classmethod
     def from_entity(clc,data:Data) -> DataDto:
@@ -38,5 +41,6 @@ class DataDto(BaseDto):
         return DataDto(
             name=data.name,
             date=data.date,
-            place=data.place
+            place=data.place,
+            source=data.source
         )
