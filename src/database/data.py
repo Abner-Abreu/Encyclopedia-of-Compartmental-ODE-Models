@@ -14,10 +14,12 @@ class Data(BaseModel):
         name (str): Unique identifier and primary key of the data.
         place (str): Place where the data was obtained
         date (date): Date when the data was obtained
+        source (str): Source of the data set, can be a url or similar.
     """
     name = CharField(max_length=100, primary_key=True)
     place = TextField()
     date = DateField()
+    source = CharField(null=True)
     
     def __str__(self):
         """
