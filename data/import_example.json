@@ -1,35 +1,174 @@
 {
-    "models": [
+  "models": [
+    {
+      "name": "thermal_cooling_electronic_devices",
+      "situation": {
+        "name": "cooling_simulation_air_forced",
+        "description": "Simulation of a cooling system for electronic devices. The model predicts temperature evolution of electronic components using forced air cooling"
+      },
+      "article": {
+        "name": "Mathematical modeling of heat transfer in electronic systems using ordinary differential equations",
+        "author": "Garcia, M., Perez, J., & Lopez, A.",
+        "date": "2024-01-15"
+      },
+      "data": {
+        "name": "temperature_measurements_lab_2024",
+        "place": "Laboratory of Thermodynamics, Building 3, Room 205",
+        "date": "2024-01-20",
+        "source": "https://doi.org/10.1234/thermodynamics.2024.001"
+      },
+      "compartments": [
         {
-            "name": "MOD_FISICA_001",
-            "situation": {
-                "name": "SITUATION_001",
-                "description": "Initial conditions"
-            },
-            "article": {
-                "name": "ARTICLE_001",
-                "author": "García, M.",
-                "date": "2024-01-15"
-            },
-            "compartments": [
-                {
-                    "name": "COMPARTMENT_01",
-                    "expression": "dV/dt = Q_in - Q_out"
-                }
-            ],
-            "params": [
-                {
-                    "name": "PARM_VELOCITY",
-                    "linear": true,
-                    "symbol": "v",
-                    "meaning": "Fluid velocity"
-                }
-            ],
-            "data": {
-                "name": "DATASET_001",
-                "place": "Laboratory 3",
-                "date": "2024-01-20"
-            }
+          "name": "component_core",
+          "expression": "dT_c/dt = (alpha * Q_in) - (beta * (T_c - T_env))"
+        },
+        {
+          "name": "component_surface",
+          "expression": "dT_s/dt = gamma * (T_c - T_s) - delta * (T_s - T_env)"
+        },
+        {
+          "name": "ambient_air",
+          "expression": "dT_env/dt = epsilon * (T_s - T_env) + zeta * Q_ext)"
         }
-    ]
+      ],
+      "params": [
+        {
+          "name": "heat_transfer",
+          "linear": true,
+          "symbol": "alpha",
+          "meaning": "Heat transfer coefficient from external source to core (W/m2K)"
+        },
+        {
+          "name": "dissipation",
+          "linear": true,
+          "symbol": "beta",
+          "meaning": "Heat dissipation coefficient from core to environment (1/s)"
+        },
+        {
+          "name": "coupling",
+          "linear": true,
+          "symbol": "gamma",
+          "meaning": "Thermal coupling coefficient between core and surface (1/s)"
+        },
+        {
+          "name": "radiation",
+          "linear": false,
+          "symbol": "delta",
+          "meaning": "Non-linear surface radiation coefficient depending on T_s^4 (1/s)"
+        },
+        {
+          "name": "ambient",
+          "linear": true,
+          "symbol": "epsilon",
+          "meaning": "Ambient heat exchange coefficient with surroundings (1/s)"
+        },
+        {
+          "name": "external_absorption",
+          "linear": false,
+          "symbol": "zeta",
+          "meaning": "Non-linear external heat absorption factor depending on Q_ext^2"
+        }
+      ]
+    },
+    {
+      "name": "cstr_reactor_chemical_production",
+      "situation": {
+        "name": "cstr_optimization_reactor_volume",
+        "description": "Simulation of a continuous stirred-tank reactor (CSTR) for the production of compound B from compound A. This model is used to optimize reactor volume and residence time"
+      },
+      "article": {
+        "name": "Optimization of continuous stirred-tank reactors for chemical production processes",
+        "author": "Rodriguez, C., & Fernandez, E.",
+        "date": "2024-02-01"
+      },
+      "data": {
+        "name": "concentration_measurements_cstr",
+        "place": "Chemical Engineering Laboratory, Building 5, Room 112",
+        "date": "2024-02-05",
+        "source": "https://doi.org/10.5678/cstr.2024.002"
+      },
+      "compartments": [
+        {
+          "name": "reactor_volume",
+          "expression": "dC_A/dt = -k1 * C_A + k2 * C_B"
+        },
+        {
+          "name": "byproduct_formation",
+          "expression": "dC_B/dt = k1 * C_A - k2 * C_B - k3 * C_B^2"
+        }
+      ],
+      "params": [
+        {
+          "name": "forward_reaction",
+          "linear": true,
+          "symbol": "k1",
+          "meaning": "Forward reaction rate constant (1/s)"
+        },
+        {
+          "name": "reverse_reaction",
+          "linear": true,
+          "symbol": "k2",
+          "meaning": "Reverse reaction rate constant (1/s)"
+        },
+        {
+          "name": "decay_constant",
+          "linear": false,
+          "symbol": "k3",
+          "meaning": "Non-linear byproduct decay constant (L/mol·s)"
+        }
+      ]
+    },
+    {
+      "name": "sir_epidemiological_urban_population",
+      "situation": {
+        "name": "pandemic_control_quarantine_vaccination",
+        "description": "Simulation of SIR model for COVID-19 in urban population. Used to evaluate the effectiveness of quarantine and vaccination strategies"
+      },
+      "article": {
+        "name": "Mathematical modeling of infectious disease dynamics in urban populations",
+        "author": "Smith, J., Davis, M., & Lee, K.",
+        "date": "2024-03-10"
+      },
+      "data": {
+        "name": "daily_infection_reports_city_2024",
+        "place": "Epidemiology Research Center, City Health Department",
+        "date": "2024-03-15",
+        "source": "https://doi.org/10.91011/epidemiology.2024.003"
+      },
+      "compartments": [
+        {
+          "name": "susceptible_population",
+          "expression": "dS/dt = -beta * S * I / N"
+        },
+        {
+          "name": "infected_population",
+          "expression": "dI/dt = beta * S * I / N - gamma * I"
+        },
+        {
+          "name": "recovered_population",
+          "expression": "dR/dt = gamma * I"
+        }
+      ],
+      "params": [
+        {
+          "name": "transmission_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Transmission rate (contacts per day)"
+        },
+        {
+          "name": "recovery_rate",
+          "linear": true,
+          "symbol": "gamma",
+          "meaning": "Recovery rate (1/days)"
+        },
+        {
+          "name": "population_size",
+          "linear": true,
+          "symbol": "N",
+          "meaning": "Total population size"
+        }
+      ]
+    }
+  ]
 }
