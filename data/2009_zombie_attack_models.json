@@ -1,0 +1,400 @@
+{
+  "models": [
+    {
+      "name": "basic_zombie_model",
+      "situation": {
+        "name": "zombie_outbreak_basic",
+        "description": "Basic model for zombie infection with three compartments: Susceptible, Zombie, and Removed. Includes birth rate, background death, zombie transmission, zombie destruction, and resurrection of removed individuals."
+      },
+      "article": {
+        "name": "When Zombies Attack!: Mathematical Modelling of an Outbreak of Zombie Infection",
+        "author": "Munz, P., Hudea, I., Imad, J., Smith?, R.J.",
+        "date": "2009-01-01"
+      },
+      "data": {
+        "name": "zombie_outbreak_simulation",
+        "place": "Matlab simulations with Euler's method",
+        "date": "2009-01-01",
+        "source": "Infectious Disease Modelling Research Progress, Nova Science Publishers, pp. 133-150"
+      },
+      "compartments": [
+        {
+          "name": "susceptible_humans",
+          "expression": "dS/dt = Pi - beta*S*Z - delta*S"
+        },
+        {
+          "name": "zombies",
+          "expression": "dZ/dt = beta*S*Z + zeta*R - alpha*S*Z"
+        },
+        {
+          "name": "removed_individuals",
+          "expression": "dR/dt = delta*S + alpha*S*Z - zeta*R"
+        }
+      ],
+      "params": [
+        {
+          "name": "birth_rate",
+          "linear": true,
+          "symbol": "Pi",
+          "meaning": "Constant birth rate"
+        },
+        {
+          "name": "transmission_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Zombie transmission rate through contact with susceptibles"
+        },
+        {
+          "name": "background_death_rate",
+          "linear": true,
+          "symbol": "delta",
+          "meaning": "Natural death rate (non-zombie related)"
+        },
+        {
+          "name": "zombie_destruction_rate",
+          "linear": false,
+          "symbol": "alpha",
+          "meaning": "Rate at which susceptibles destroy zombies (defeat rate)"
+        },
+        {
+          "name": "resurrection_rate",
+          "linear": true,
+          "symbol": "zeta",
+          "meaning": "Rate at which removed individuals resurrect as zombies"
+        }
+      ]
+    },
+    {
+      "name": "zombie_latent_infection_model",
+      "situation": {
+        "name": "zombie_outbreak_latent",
+        "description": "SIZR model with latent infection period. Susceptibles first become infected (bitten) before turning into zombies. Includes a latent class I with progression rate rho."
+      },
+      "article": {
+        "name": "When Zombies Attack!: Mathematical Modelling of an Outbreak of Zombie Infection",
+        "author": "Munz, P., Hudea, I., Imad, J., Smith?, R.J.",
+        "date": "2009-01-01"
+      },
+      "data": {
+        "name": "zombie_latent_simulation",
+        "place": "Matlab simulations with Euler's method",
+        "date": "2009-01-01",
+        "source": "Infectious Disease Modelling Research Progress, Nova Science Publishers, pp. 133-150"
+      },
+      "compartments": [
+        {
+          "name": "susceptible_humans",
+          "expression": "dS/dt = Pi - beta*S*Z - delta*S"
+        },
+        {
+          "name": "infected_latent",
+          "expression": "dI/dt = beta*S*Z - rho*I - delta*I"
+        },
+        {
+          "name": "zombies",
+          "expression": "dZ/dt = rho*I + zeta*R - alpha*S*Z"
+        },
+        {
+          "name": "removed_individuals",
+          "expression": "dR/dt = delta*S + delta*I + alpha*S*Z - zeta*R"
+        }
+      ],
+      "params": [
+        {
+          "name": "birth_rate",
+          "linear": true,
+          "symbol": "Pi",
+          "meaning": "Constant birth rate"
+        },
+        {
+          "name": "transmission_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Zombie transmission rate through contact"
+        },
+        {
+          "name": "background_death_rate",
+          "linear": true,
+          "symbol": "delta",
+          "meaning": "Natural death rate"
+        },
+        {
+          "name": "zombie_destruction_rate",
+          "linear": false,
+          "symbol": "alpha",
+          "meaning": "Rate at which susceptibles destroy zombies"
+        },
+        {
+          "name": "resurrection_rate",
+          "linear": true,
+          "symbol": "zeta",
+          "meaning": "Resurrection rate of removed as zombies"
+        },
+        {
+          "name": "zombification_rate",
+          "linear": true,
+          "symbol": "rho",
+          "meaning": "Rate at which infected become zombies (1/latent period)"
+        }
+      ]
+    },
+    {
+      "name": "zombie_quarantine_model",
+      "situation": {
+        "name": "zombie_outbreak_quarantine",
+        "description": "SIZRQ model with quarantine. Quarantined individuals (infected and zombies) are removed from population and cannot infect. Includes escape attempts from quarantine."
+      },
+      "article": {
+        "name": "When Zombies Attack!: Mathematical Modelling of an Outbreak of Zombie Infection",
+        "author": "Munz, P., Hudea, I., Imad, J., Smith?, R.J.",
+        "date": "2009-01-01"
+      },
+      "data": {
+        "name": "zombie_quarantine_simulation",
+        "place": "Matlab simulations with Euler's method",
+        "date": "2009-01-01",
+        "source": "Infectious Disease Modelling Research Progress, Nova Science Publishers, pp. 133-150"
+      },
+      "compartments": [
+        {
+          "name": "susceptible_humans",
+          "expression": "dS/dt = Pi - beta*S*Z - delta*S"
+        },
+        {
+          "name": "infected_latent",
+          "expression": "dI/dt = beta*S*Z - rho*I - delta*I - kappa*I"
+        },
+        {
+          "name": "zombies",
+          "expression": "dZ/dt = rho*I + zeta*R - alpha*S*Z - sigma*Z"
+        },
+        {
+          "name": "removed_individuals",
+          "expression": "dR/dt = delta*S + delta*I + alpha*S*Z - zeta*R + gamma*Q"
+        },
+        {
+          "name": "quarantined",
+          "expression": "dQ/dt = kappa*I + sigma*Z - gamma*Q"
+        }
+      ],
+      "params": [
+        {
+          "name": "birth_rate",
+          "linear": true,
+          "symbol": "Pi",
+          "meaning": "Constant birth rate"
+        },
+        {
+          "name": "transmission_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Zombie transmission rate"
+        },
+        {
+          "name": "background_death_rate",
+          "linear": true,
+          "symbol": "delta",
+          "meaning": "Natural death rate"
+        },
+        {
+          "name": "zombie_destruction_rate",
+          "linear": false,
+          "symbol": "alpha",
+          "meaning": "Rate at which susceptibles destroy zombies"
+        },
+        {
+          "name": "resurrection_rate",
+          "linear": true,
+          "symbol": "zeta",
+          "meaning": "Resurrection rate"
+        },
+        {
+          "name": "zombification_rate",
+          "linear": true,
+          "symbol": "rho",
+          "meaning": "Rate infected become zombies"
+        },
+        {
+          "name": "infected_quarantine_rate",
+          "linear": true,
+          "symbol": "kappa",
+          "meaning": "Rate of quarantining infected individuals"
+        },
+        {
+          "name": "zombie_quarantine_rate",
+          "linear": true,
+          "symbol": "sigma",
+          "meaning": "Rate of quarantining zombies"
+        },
+        {
+          "name": "escape_rate",
+          "linear": true,
+          "symbol": "gamma",
+          "meaning": "Rate of escape attempts from quarantine (killed upon escape)"
+        },
+        {
+          "name": "basic_reproductive_ratio",
+          "linear": false,
+          "symbol": "R0",
+          "meaning": "R0 = beta*N*rho / ((rho+kappa)*(alpha*N+sigma))"
+        }
+      ]
+    },
+    {
+      "name": "zombie_cure_model",
+      "situation": {
+        "name": "zombie_outbreak_cure",
+        "description": "SIZR model with cure/treatment. Zombies can be cured and return to susceptible class. Cure does not provide immunity."
+      },
+      "article": {
+        "name": "When Zombies Attack!: Mathematical Modelling of an Outbreak of Zombie Infection",
+        "author": "Munz, P., Hudea, I., Imad, J., Smith?, R.J.",
+        "date": "2009-01-01"
+      },
+      "data": {
+        "name": "zombie_cure_simulation",
+        "place": "Matlab simulations with Euler's method",
+        "date": "2009-01-01",
+        "source": "Infectious Disease Modelling Research Progress, Nova Science Publishers, pp. 133-150"
+      },
+      "compartments": [
+        {
+          "name": "susceptible_humans",
+          "expression": "dS/dt = Pi - beta*S*Z - delta*S + c*Z"
+        },
+        {
+          "name": "infected_latent",
+          "expression": "dI/dt = beta*S*Z - rho*I - delta*I"
+        },
+        {
+          "name": "zombies",
+          "expression": "dZ/dt = rho*I + zeta*R - alpha*S*Z - c*Z"
+        },
+        {
+          "name": "removed_individuals",
+          "expression": "dR/dt = delta*S + delta*I + alpha*S*Z - zeta*R"
+        }
+      ],
+      "params": [
+        {
+          "name": "birth_rate",
+          "linear": true,
+          "symbol": "Pi",
+          "meaning": "Constant birth rate"
+        },
+        {
+          "name": "transmission_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Zombie transmission rate"
+        },
+        {
+          "name": "background_death_rate",
+          "linear": true,
+          "symbol": "delta",
+          "meaning": "Natural death rate"
+        },
+        {
+          "name": "zombie_destruction_rate",
+          "linear": false,
+          "symbol": "alpha",
+          "meaning": "Rate at which susceptibles destroy zombies"
+        },
+        {
+          "name": "resurrection_rate",
+          "linear": true,
+          "symbol": "zeta",
+          "meaning": "Resurrection rate"
+        },
+        {
+          "name": "zombification_rate",
+          "linear": true,
+          "symbol": "rho",
+          "meaning": "Rate infected become zombies"
+        },
+        {
+          "name": "cure_rate",
+          "linear": true,
+          "symbol": "c",
+          "meaning": "Rate at which zombies are cured and become susceptible"
+        }
+      ]
+    },
+    {
+      "name": "zombie_impulsive_eradication_model",
+      "situation": {
+        "name": "zombie_outbreak_impulsive",
+        "description": "Basic zombie model with impulsive eradication. Periodic coordinated attacks destroy a fraction of zombies at discrete time intervals with increasing kill ratios."
+      },
+      "article": {
+        "name": "When Zombies Attack!: Mathematical Modelling of an Outbreak of Zombie Infection",
+        "author": "Munz, P., Hudea, I., Imad, J., Smith?, R.J.",
+        "date": "2009-01-01"
+      },
+      "data": {
+        "name": "zombie_impulsive_simulation",
+        "place": "Matlab simulations with Euler's method and impulsive effects",
+        "date": "2009-01-01",
+        "source": "Infectious Disease Modelling Research Progress, Nova Science Publishers, pp. 133-150"
+      },
+      "compartments": [
+        {
+          "name": "susceptible_humans",
+          "expression": "dS/dt = Pi - beta*S*Z - delta*S (t != tn)"
+        },
+        {
+          "name": "zombies",
+          "expression": "dZ/dt = beta*S*Z + zeta*R - alpha*S*Z (t != tn); Delta Z = -k*n*Z (t = tn)"
+        },
+        {
+          "name": "removed_individuals",
+          "expression": "dR/dt = delta*S + alpha*S*Z - zeta*R (t != tn)"
+        }
+      ],
+      "params": [
+        {
+          "name": "birth_rate",
+          "linear": true,
+          "symbol": "Pi",
+          "meaning": "Constant birth rate"
+        },
+        {
+          "name": "transmission_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Zombie transmission rate"
+        },
+        {
+          "name": "background_death_rate",
+          "linear": true,
+          "symbol": "delta",
+          "meaning": "Natural death rate"
+        },
+        {
+          "name": "zombie_destruction_rate",
+          "linear": false,
+          "symbol": "alpha",
+          "meaning": "Rate at which susceptibles destroy zombies"
+        },
+        {
+          "name": "resurrection_rate",
+          "linear": true,
+          "symbol": "zeta",
+          "meaning": "Resurrection rate"
+        },
+        {
+          "name": "kill_ratio",
+          "linear": true,
+          "symbol": "k",
+          "meaning": "Kill ratio per attack (0 < k <= 1)"
+        },
+        {
+          "name": "attack_number",
+          "linear": true,
+          "symbol": "n",
+          "meaning": "Number of attacks (n = 1, 2, 3, ...)"
+        }
+      ]
+    }
+  ]
+}
