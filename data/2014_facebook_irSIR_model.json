@@ -1,0 +1,132 @@
+{
+  "models": [
+    {
+      "name": "sir_facebook_model",
+      "situation": {
+        "name": "facebook_adoption_sir",
+        "description": "Traditional SIR model applied to Facebook adoption dynamics. Susceptible users become infected (join Facebook) through contact with current users, and recover (leave Facebook) at a constant rate."
+      },
+      "article": {
+        "name": "Epidemiological modeling of online social network dynamics",
+        "author": "Cannarella, J., Spechler, J.A.",
+        "date": "2014-01-17"
+      },
+      "data": {
+        "name": "facebook_google_trends_data",
+        "place": "Google search query data for Facebook (Jan 2004 - Jul 2013)",
+        "date": "2014-01-17",
+        "source": "arXiv:1401.4208v1 [cs.SI]"
+      },
+      "compartments": [
+        {
+          "name": "susceptible_users",
+          "expression": "dS/dt = -beta*S*I/N"
+        },
+        {
+          "name": "infected_users",
+          "expression": "dI/dt = beta*S*I/N - gamma*I"
+        },
+        {
+          "name": "recovered_users",
+          "expression": "dR/dt = gamma*I"
+        }
+      ],
+      "params": [
+        {
+          "name": "infection_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Rate at which potential users join OSN through contact (1/time)"
+        },
+        {
+          "name": "recovery_rate",
+          "linear": true,
+          "symbol": "gamma",
+          "meaning": "OSN abandonment rate (1/time)"
+        },
+        {
+          "name": "total_population",
+          "linear": true,
+          "symbol": "N",
+          "meaning": "Total population (constant)"
+        },
+        {
+          "name": "basic_reproductive_number",
+          "linear": false,
+          "symbol": "R0",
+          "meaning": "R0 = beta/gamma"
+        }
+      ]
+    },
+    {
+      "name": "irSIR_facebook_model",
+      "situation": {
+        "name": "facebook_adoption_irSIR",
+        "description": "Infectious recovery SIR (irSIR) model for Facebook. Recovery (abandonment) spreads infectiously - users leave when their peers leave. Requires contact between recovered and infected for recovery."
+      },
+      "article": {
+        "name": "Epidemiological modeling of online social network dynamics",
+        "author": "Cannarella, J., Spechler, J.A.",
+        "date": "2014-01-17"
+      },
+      "data": {
+        "name": "facebook_google_trends_data",
+        "place": "Google search query data for Facebook (Jan 2004 - Jul 2013)",
+        "date": "2014-01-17",
+        "source": "arXiv:1401.4208v1 [cs.SI]"
+      },
+      "compartments": [
+        {
+          "name": "susceptible_users",
+          "expression": "dS/dt = -beta*S*I/N"
+        },
+        {
+          "name": "infected_users",
+          "expression": "dI/dt = beta*S*I/N - nu*I*R/N"
+        },
+        {
+          "name": "recovered_users",
+          "expression": "dR/dt = nu*I*R/N"
+        }
+      ],
+      "params": [
+        {
+          "name": "infection_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Rate at which potential users join OSN through contact (1/time)"
+        },
+        {
+          "name": "infectious_recovery_rate",
+          "linear": false,
+          "symbol": "nu",
+          "meaning": "Infectious recovery rate - abandonment spreads through contact with recovered (1/time)"
+        },
+        {
+          "name": "total_population",
+          "linear": true,
+          "symbol": "N",
+          "meaning": "Total population (constant)"
+        },
+        {
+          "name": "basic_reproductive_number",
+          "linear": false,
+          "symbol": "R0",
+          "meaning": "R0 = beta/gamma for SIR; for irSIR depends on R0 and nu"
+        },
+        {
+          "name": "immunization_criterion",
+          "linear": false,
+          "symbol": "S0*gamma < N*beta",
+          "meaning": "Condition for disease-free equilibrium stability in SIR"
+        },
+        {
+          "name": "irSIR_immunization_criterion",
+          "linear": false,
+          "symbol": "S0*gamma < R0*beta",
+          "meaning": "Condition for irSIR model stability"
+        }
+      ]
+    }
+  ]
+}
