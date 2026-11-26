@@ -1,0 +1,222 @@
+{
+  "models": [
+    {
+      "name": "italian_drug_user_dynamics_model",
+      "situation": {
+        "name": "drug_use_italy_scenario_analysis",
+        "description": "Six-compartment model of illicit drug use trends in Italy with pure cannabis users and poly-drug users, each divided into occasional, regular, and intensive users. Includes health care compartment and susceptible source. Used for scenario analysis of policy interventions."
+      },
+      "article": {
+        "name": "Drug user dynamics: A compartmental model of drug users for scenario analyses",
+        "author": "Santoro, M., Triolo, L., Rossi, C.",
+        "date": "2013-06-01"
+      },
+      "data": {
+        "name": "italian_drug_use_data",
+        "place": "Italy (demographic databases, administrative data, surveys 2005-2012)",
+        "date": "2013-06-01",
+        "source": "Drugs: education, prevention and policy, 20(3): 184-194"
+      },
+      "compartments": [
+        {
+          "name": "cannabis_occasional",
+          "expression": "dCo/dt = omega_Co*S0 + omega_o*Ao + phi_ro*Cr - Co*(phi_o + phi_ro + delta_Co + dCo)"
+        },
+        {
+          "name": "other_occasional",
+          "expression": "dAo/dt = omega_A*S0 + phi_o*Co + psi_ro*Ar - Ao*(omega_o + psi_or + delta_A + dAo)"
+        },
+        {
+          "name": "cannabis_regular",
+          "expression": "dCr/dt = omega_r*Ar + phi_or*Co + phi_ir*Ci - Cr*(phi_r + phi_ro + phi_ri + dCr)"
+        },
+        {
+          "name": "other_regular",
+          "expression": "dAr/dt = phi_r*Cr + psi_or*Ao + psi_ir*Ai - Ar*(omega_r + psi_ro + psi_ri + dAr)"
+        },
+        {
+          "name": "cannabis_intensive",
+          "expression": "dCi/dt = phi_ri*Cr + eta_Ci*H - Ci*(phi_ir + delta_Ci + dCi)"
+        },
+        {
+          "name": "other_intensive",
+          "expression": "dAi/dt = psi_ri*Ar + eta_Ai*H - Ai*(psi_ir + delta_Ai + dAi)"
+        },
+        {
+          "name": "health_care",
+          "expression": "dH/dt = delta_Ci*Ci + delta_Ai*Ai - H*(eta_Ci + eta_Ai + dH)"
+        }
+      ],
+      "params": [
+        {
+          "name": "susceptible_population",
+          "linear": true,
+          "symbol": "S0",
+          "meaning": "Susceptible population aged 15-32 (constant, 11,700,000)"
+        },
+        {
+          "name": "cannabis_entry_rate",
+          "linear": true,
+          "symbol": "omega_Co",
+          "meaning": "Entry rate from susceptibles to occasional cannabis users (0.13/year)"
+        },
+        {
+          "name": "other_drugs_entry_rate",
+          "linear": true,
+          "symbol": "omega_A",
+          "meaning": "Entry rate from susceptibles to occasional other drug users (0.032/year)"
+        },
+        {
+          "name": "cannabis_occasional_to_regular",
+          "linear": true,
+          "symbol": "phi_or",
+          "meaning": "Forward transition: cannabis occasional to regular (0.105/year)"
+        },
+        {
+          "name": "cannabis_regular_to_occasional",
+          "linear": true,
+          "symbol": "phi_ro",
+          "meaning": "Backward transition: cannabis regular to occasional (0.08/year)"
+        },
+        {
+          "name": "cannabis_regular_to_intensive",
+          "linear": true,
+          "symbol": "phi_ri",
+          "meaning": "Forward transition: cannabis regular to intensive (0.16/year)"
+        },
+        {
+          "name": "cannabis_intensive_to_regular",
+          "linear": true,
+          "symbol": "phi_ir",
+          "meaning": "Backward transition: cannabis intensive to regular (0.09/year)"
+        },
+        {
+          "name": "other_occasional_to_regular",
+          "linear": true,
+          "symbol": "psi_or",
+          "meaning": "Forward transition: other occasional to regular (0.283/year)"
+        },
+        {
+          "name": "other_regular_to_occasional",
+          "linear": true,
+          "symbol": "psi_ro",
+          "meaning": "Backward transition: other regular to occasional (0.05/year)"
+        },
+        {
+          "name": "other_regular_to_intensive",
+          "linear": true,
+          "symbol": "psi_ri",
+          "meaning": "Forward transition: other regular to intensive (0.67/year)"
+        },
+        {
+          "name": "other_intensive_to_regular",
+          "linear": true,
+          "symbol": "psi_ir",
+          "meaning": "Backward transition: other intensive to regular (0.074/year)"
+        },
+        {
+          "name": "cannabis_occasional_quit",
+          "linear": true,
+          "symbol": "delta_Co",
+          "meaning": "Quit rate: cannabis occasional to removed (0.38/year)"
+        },
+        {
+          "name": "other_occasional_quit",
+          "linear": true,
+          "symbol": "delta_Ao",
+          "meaning": "Quit rate: other occasional to removed (0.25/year)"
+        },
+        {
+          "name": "cannabis_intensive_treatment",
+          "linear": true,
+          "symbol": "delta_Ci",
+          "meaning": "Treatment rate: cannabis intensive to health care (0.06/year)"
+        },
+        {
+          "name": "other_intensive_treatment",
+          "linear": true,
+          "symbol": "delta_Ai",
+          "meaning": "Treatment rate: other intensive to health care (0.3/year)"
+        },
+        {
+          "name": "health_to_cannabis_intensive",
+          "linear": true,
+          "symbol": "eta_Ci",
+          "meaning": "Backward transition: health care to cannabis intensive (0.05/year)"
+        },
+        {
+          "name": "health_to_other_intensive",
+          "linear": true,
+          "symbol": "eta_Ai",
+          "meaning": "Backward transition: health care to other intensive (0.45/year)"
+        },
+        {
+          "name": "c_occasional_to_other",
+          "linear": true,
+          "symbol": "omega_o",
+          "meaning": "Transition: cannabis occasional to other occasional (0.075/year)"
+        },
+        {
+          "name": "other_occasional_to_cannabis",
+          "linear": true,
+          "symbol": "phi_o",
+          "meaning": "Transition: other occasional to cannabis occasional (0.08/year)"
+        },
+        {
+          "name": "c_regular_to_other",
+          "linear": true,
+          "symbol": "omega_r",
+          "meaning": "Transition: cannabis regular to other regular (0.04/year)"
+        },
+        {
+          "name": "other_regular_to_cannabis",
+          "linear": true,
+          "symbol": "psi_r",
+          "meaning": "Transition: other regular to cannabis regular (0.005/year)"
+        },
+        {
+          "name": "death_cannabis_occasional",
+          "linear": true,
+          "symbol": "dCo",
+          "meaning": "Death rate: cannabis occasional (0.0167/year)"
+        },
+        {
+          "name": "death_other_occasional",
+          "linear": true,
+          "symbol": "dAo",
+          "meaning": "Death rate: other occasional (0.0172/year)"
+        },
+        {
+          "name": "death_cannabis_regular",
+          "linear": true,
+          "symbol": "dCr",
+          "meaning": "Death rate: cannabis regular (0.0309/year)"
+        },
+        {
+          "name": "death_other_regular",
+          "linear": true,
+          "symbol": "dAr",
+          "meaning": "Death rate: other regular (0.321/year)"
+        },
+        {
+          "name": "death_cannabis_intensive",
+          "linear": true,
+          "symbol": "dCi",
+          "meaning": "Death/quit rate: cannabis intensive (0.0310+0.179/year)"
+        },
+        {
+          "name": "death_other_intensive",
+          "linear": true,
+          "symbol": "dAi",
+          "meaning": "Death rate: other intensive (0.2222/year)"
+        },
+        {
+          "name": "death_health_care",
+          "linear": true,
+          "symbol": "dH",
+          "meaning": "Death/quit rate: health care (0.2222+0.179/year)"
+        }
+      ]
+    }
+  ]
+}
