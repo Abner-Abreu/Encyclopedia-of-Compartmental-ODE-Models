@@ -1,0 +1,286 @@
+{
+  "models": [
+    {
+      "name": "illicit_drug_use_model",
+      "situation": {
+        "name": "drug_use_dynamics_south_africa",
+        "description": "SIR-type model for illicit drug use dynamics with compartments: Susceptible, Light drug users, Heavy drug users, Mentally ill, and Detected/Rehabilitation. Includes optimal control for reducing social influence and increasing detection/rehabilitation."
+      },
+      "article": {
+        "name": "Modeling Illicit Drug Use Dynamics and Its Optimal Control Analysis",
+        "author": "Mushayabasa, S., Tapedzesa, G.",
+        "date": "2015-01-01"
+      },
+      "data": {
+        "name": "south_africa_drug_use_data",
+        "place": "Cape Town, Gauteng, Mpumalanga, Durban communities (1996-2008)",
+        "date": "2015-01-01",
+        "source": "Computational and Mathematical Methods in Medicine, Volume 2015, Article ID 383154"
+      },
+      "compartments": [
+        {
+          "name": "susceptible",
+          "expression": "dS/dt = mu - lambda*S - mu*S"
+        },
+        {
+          "name": "light_drug_users",
+          "expression": "dI/dt = lambda*S - (alpha + gamma + sigma + mu + psi)*I"
+        },
+        {
+          "name": "heavy_drug_users",
+          "expression": "dIa/dt = alpha*I - (rho + phi + mu + d)*Ia"
+        },
+        {
+          "name": "mentally_ill",
+          "expression": "dM/dt = sigma*I + phi*Ia - (epsilon + mu + delta)*M"
+        },
+        {
+          "name": "detected_rehabilitation",
+          "expression": "dR/dt = gamma*I + rho*Ia + epsilon*M - (mu + omega)*R"
+        }
+      ],
+      "params": [
+        {
+          "name": "recruitment_rate",
+          "linear": true,
+          "symbol": "mu",
+          "meaning": "Recruitment rate and non-drug-related death rate (per year)"
+        },
+        {
+          "name": "transmission_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Strength of interactions between susceptibles and drug users (per year)"
+        },
+        {
+          "name": "modification_factor",
+          "linear": true,
+          "symbol": "kappa",
+          "meaning": "Modification factor for heavy users influence (kappa >= 1)"
+        },
+        {
+          "name": "force_of_infection",
+          "linear": false,
+          "symbol": "lambda",
+          "meaning": "Force of infection: lambda = beta*(I + kappa*Ia)"
+        },
+        {
+          "name": "escalation_rate",
+          "linear": true,
+          "symbol": "alpha",
+          "meaning": "Rate light users become heavy users (per year)"
+        },
+        {
+          "name": "detection_light_users",
+          "linear": true,
+          "symbol": "gamma",
+          "meaning": "Detection and rehabilitation rate for light users (per year)"
+        },
+        {
+          "name": "detection_heavy_users",
+          "linear": true,
+          "symbol": "rho",
+          "meaning": "Detection and rehabilitation rate for heavy users (per year)"
+        },
+        {
+          "name": "detection_mentally_ill",
+          "linear": true,
+          "symbol": "epsilon",
+          "meaning": "Detection and rehabilitation rate for mentally ill (per year)"
+        },
+        {
+          "name": "mental_illness_light",
+          "linear": true,
+          "symbol": "sigma",
+          "meaning": "Rate light users develop mental illness (per year)"
+        },
+        {
+          "name": "mental_illness_heavy",
+          "linear": true,
+          "symbol": "phi",
+          "meaning": "Rate heavy users develop mental illness (per year, phi >= sigma)"
+        },
+        {
+          "name": "exit_light_users",
+          "linear": true,
+          "symbol": "psi",
+          "meaning": "Permanent exit rate for light users (cessation or death) (per year)"
+        },
+        {
+          "name": "exit_heavy_users",
+          "linear": true,
+          "symbol": "d",
+          "meaning": "Permanent exit rate for heavy users (cessation or death) (per year)"
+        },
+        {
+          "name": "mental_illness_death",
+          "linear": true,
+          "symbol": "delta",
+          "meaning": "Drug use-related death rate for mentally ill (per year)"
+        },
+        {
+          "name": "recovery_rate",
+          "linear": true,
+          "symbol": "omega",
+          "meaning": "Recovery rate from rehabilitation (per year)"
+        },
+        {
+          "name": "basic_reproductive_number",
+          "linear": false,
+          "symbol": "Rd",
+          "meaning": "Rd = beta*(alpha*kappa + mu + rho + phi + d) / ((alpha + gamma + mu + sigma + psi)*(mu + rho + phi + d))"
+        }
+      ]
+    },
+    {
+      "name": "illicit_drug_use_optimal_control_model",
+      "situation": {
+        "name": "drug_use_optimal_control",
+        "description": "Extended drug use model with two time-dependent control functions: u(t) reduces social influence between susceptibles and drug users, V(t) increases detection and rehabilitation rates."
+      },
+      "article": {
+        "name": "Modeling Illicit Drug Use Dynamics and Its Optimal Control Analysis",
+        "author": "Mushayabasa, S., Tapedzesa, G.",
+        "date": "2015-01-01"
+      },
+      "data": {
+        "name": "south_africa_drug_use_optimal_control",
+        "place": "Cape Town, Gauteng, Mpumalanga, Durban communities",
+        "date": "2015-01-01",
+        "source": "Computational and Mathematical Methods in Medicine, Volume 2015, Article ID 383154"
+      },
+      "compartments": [
+        {
+          "name": "susceptible",
+          "expression": "dS/dt = mu - (1-u)*lambda*S - mu*S"
+        },
+        {
+          "name": "light_drug_users",
+          "expression": "dI/dt = (1-u)*lambda*S - (alpha + gamma*V + sigma + mu + psi)*I"
+        },
+        {
+          "name": "heavy_drug_users",
+          "expression": "dIa/dt = alpha*I - (phi + rho*V + mu + d)*Ia"
+        },
+        {
+          "name": "mentally_ill",
+          "expression": "dM/dt = sigma*I + phi*Ia - (mu + epsilon*V + delta)*M"
+        },
+        {
+          "name": "detected_rehabilitation",
+          "expression": "dR/dt = V*(gamma*I + rho*Ia + epsilon*M) - (mu + omega)*R"
+        }
+      ],
+      "params": [
+        {
+          "name": "recruitment_rate",
+          "linear": true,
+          "symbol": "mu",
+          "meaning": "Recruitment and death rate (per year)"
+        },
+        {
+          "name": "transmission_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Interaction strength (per year)"
+        },
+        {
+          "name": "modification_factor",
+          "linear": true,
+          "symbol": "kappa",
+          "meaning": "Heavy user influence factor (kappa >= 1)"
+        },
+        {
+          "name": "escalation_rate",
+          "linear": true,
+          "symbol": "alpha",
+          "meaning": "Light to heavy user escalation rate (per year)"
+        },
+        {
+          "name": "detection_light_users",
+          "linear": true,
+          "symbol": "gamma",
+          "meaning": "Base detection rate for light users (per year)"
+        },
+        {
+          "name": "detection_heavy_users",
+          "linear": true,
+          "symbol": "rho",
+          "meaning": "Base detection rate for heavy users (per year)"
+        },
+        {
+          "name": "detection_mentally_ill",
+          "linear": true,
+          "symbol": "epsilon",
+          "meaning": "Base detection rate for mentally ill (per year)"
+        },
+        {
+          "name": "mental_illness_light",
+          "linear": true,
+          "symbol": "sigma",
+          "meaning": "Light user mental illness rate (per year)"
+        },
+        {
+          "name": "mental_illness_heavy",
+          "linear": true,
+          "symbol": "phi",
+          "meaning": "Heavy user mental illness rate (per year)"
+        },
+        {
+          "name": "exit_light_users",
+          "linear": true,
+          "symbol": "psi",
+          "meaning": "Light user exit rate (per year)"
+        },
+        {
+          "name": "exit_heavy_users",
+          "linear": true,
+          "symbol": "d",
+          "meaning": "Heavy user exit rate (per year)"
+        },
+        {
+          "name": "mental_illness_death",
+          "linear": true,
+          "symbol": "delta",
+          "meaning": "Mentally ill death rate (per year)"
+        },
+        {
+          "name": "recovery_rate",
+          "linear": true,
+          "symbol": "omega",
+          "meaning": "Rehabilitation recovery rate (per year)"
+        },
+        {
+          "name": "control_social_influence",
+          "linear": true,
+          "symbol": "u",
+          "meaning": "Control function reducing social influence (0 <= u <= 1)"
+        },
+        {
+          "name": "control_detection",
+          "linear": true,
+          "symbol": "V",
+          "meaning": "Control function increasing detection/rehabilitation (0 <= V <= 1)"
+        },
+        {
+          "name": "cost_weight_u",
+          "linear": true,
+          "symbol": "A",
+          "meaning": "Balancing coefficient for u(t) cost"
+        },
+        {
+          "name": "cost_weight_V",
+          "linear": true,
+          "symbol": "B",
+          "meaning": "Balancing coefficient for V(t) cost"
+        },
+        {
+          "name": "objective_functional",
+          "linear": false,
+          "symbol": "J",
+          "meaning": "J = integral_0^T [I + Ia + A*u^2 + B*V^2] dt"
+        }
+      ]
+    }
+  ]
+}
