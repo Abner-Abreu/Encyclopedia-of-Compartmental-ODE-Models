@@ -1,0 +1,168 @@
+{
+  "models": [
+    {
+      "name": "spatial_zombie_swarm_model",
+      "situation": {
+        "name": "zombie_swarm_spatial_pde",
+        "description": "Spatial zombie model with nonlocal advection and diffusion. Incorporates social interaction kernels for repulsion (susceptibles avoid zombies) and attraction (zombies attracted to susceptibles). Reaction-diffusion-advection PDE system on a periodic domain."
+      },
+      "article": {
+        "name": "The Zombie Swarm",
+        "author": "Sander, E., Topaz, C.M.",
+        "date": "2014-01-01"
+      },
+      "data": {
+        "name": "spatial_zombie_simulation",
+        "place": "Numerical simulations of PDE system",
+        "date": "2014-01-01",
+        "source": "Mathematical Modelling of Zombies, University of Ottawa Press"
+      },
+      "compartments": [
+        {
+          "name": "susceptible_humans",
+          "expression": "dS/dt = -div(S * (K_S * Z)) + D_S * S_xx - beta*S*Z"
+        },
+        {
+          "name": "zombies",
+          "expression": "dZ/dt = -div(Z * (K_Z * S)) + D_Z * Z_xx + beta*S*Z + R - alpha*S*Z"
+        },
+        {
+          "name": "removed",
+          "expression": "dR/dt = alpha*S*Z - R"
+        }
+      ],
+      "params": [
+        {
+          "name": "susceptible_diffusion",
+          "linear": true,
+          "symbol": "D_S",
+          "meaning": "Diffusion coefficient for susceptibles"
+        },
+        {
+          "name": "zombie_diffusion",
+          "linear": true,
+          "symbol": "D_Z",
+          "meaning": "Diffusion coefficient for zombies"
+        },
+        {
+          "name": "transmission_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Infection/transmission rate"
+        },
+        {
+          "name": "zombie_destruction_rate",
+          "linear": false,
+          "symbol": "alpha",
+          "meaning": "Rate at which susceptibles destroy zombies"
+        },
+        {
+          "name": "removal_rate",
+          "linear": true,
+          "symbol": "1",
+          "meaning": "Rate at which removed individuals are permanently removed (rescaled to 1)"
+        },
+        {
+          "name": "susceptible_repulsion_kernel",
+          "linear": false,
+          "symbol": "K_S",
+          "meaning": "Repulsive social interaction kernel (susceptibles avoid zombies)"
+        },
+        {
+          "name": "zombie_attraction_kernel",
+          "linear": false,
+          "symbol": "K_Z",
+          "meaning": "Attractive social interaction kernel (zombies attracted to susceptibles)"
+        },
+        {
+          "name": "repulsion_strength",
+          "linear": true,
+          "symbol": "F",
+          "meaning": "Strength of zombie attraction to susceptibles"
+        },
+        {
+          "name": "kernel_range_zombie",
+          "linear": true,
+          "symbol": "ell",
+          "meaning": "Range parameter for zombie attraction kernel"
+        }
+      ]
+    },
+    {
+      "name": "spatial_zombie_cure_model",
+      "situation": {
+        "name": "zombie_swarm_cure_spatial",
+        "description": "Spatial zombie model with cure. Cured zombies return to susceptible class. Includes cure rate c."
+      },
+      "article": {
+        "name": "The Zombie Swarm",
+        "author": "Sander, E., Topaz, C.M.",
+        "date": "2014-01-01"
+      },
+      "data": {
+        "name": "spatial_zombie_cure_simulation",
+        "place": "Numerical simulations of PDE system",
+        "date": "2014-01-01",
+        "source": "Mathematical Modelling of Zombies, University of Ottawa Press"
+      },
+      "compartments": [
+        {
+          "name": "susceptible_humans",
+          "expression": "dS/dt = -div(S * (K_S * Z)) + D_S * S_xx - beta*S*Z + c*Z"
+        },
+        {
+          "name": "zombies",
+          "expression": "dZ/dt = -div(Z * (K_Z * S)) + D_Z * Z_xx + beta*S*Z + R - alpha*S*Z - c*Z"
+        },
+        {
+          "name": "removed",
+          "expression": "dR/dt = alpha*S*Z - R"
+        }
+      ],
+      "params": [
+        {
+          "name": "susceptible_diffusion",
+          "linear": true,
+          "symbol": "D_S",
+          "meaning": "Diffusion coefficient for susceptibles"
+        },
+        {
+          "name": "zombie_diffusion",
+          "linear": true,
+          "symbol": "D_Z",
+          "meaning": "Diffusion coefficient for zombies"
+        },
+        {
+          "name": "transmission_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Infection/transmission rate"
+        },
+        {
+          "name": "zombie_destruction_rate",
+          "linear": false,
+          "symbol": "alpha",
+          "meaning": "Rate at which susceptibles destroy zombies"
+        },
+        {
+          "name": "cure_rate",
+          "linear": true,
+          "symbol": "c",
+          "meaning": "Rate at which zombies are cured and become susceptible"
+        },
+        {
+          "name": "susceptible_repulsion_kernel",
+          "linear": false,
+          "symbol": "K_S",
+          "meaning": "Repulsive social interaction kernel"
+        },
+        {
+          "name": "zombie_attraction_kernel",
+          "linear": false,
+          "symbol": "K_Z",
+          "meaning": "Attractive social interaction kernel"
+        }
+      ]
+    }
+  ]
+}
