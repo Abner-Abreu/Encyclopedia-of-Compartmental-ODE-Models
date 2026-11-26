@@ -1,0 +1,102 @@
+{
+  "models": [
+    {
+      "name": "depression_young_women_model",
+      "situation": {
+        "name": "depression_beauty_pressure_peer_influence",
+        "description": "Mathematical model of depression in young women (ages 15-24) as a function of pressure to be 'beautiful' from media and peers. Four compartments: high vulnerability (V1), low vulnerability (V2), depressed (D), and treatment (T). Peer pressure drives movement between vulnerability classes, media affects high vulnerability class, treatment with relapse."
+      },
+      "article": {
+        "name": "A Mathematical Model of Depression in Young Women as a Function of the Pressure to be Beautiful",
+        "author": "Dillon, J.L., Baeza, N., Ruales, M.C., Song, B.",
+        "date": "2002-08-09"
+      },
+      "data": {
+        "name": "depression_model_simulation",
+        "place": "Numerical simulation with estimated parameters",
+        "date": "2002-08-09",
+        "source": "MTBI Technical Report, Cornell University"
+      },
+      "compartments": [
+        {
+          "name": "high_vulnerability",
+          "expression": "dV1/dt = q*mu*N + epsilon*(V1+D)/N*V2 - delta*V2/N*V1 - alpha*V1 - mu*V1"
+        },
+        {
+          "name": "low_vulnerability",
+          "expression": "dV2/dt = (1-q)*mu*N + delta*V2/N*V1 + beta*p*T - epsilon*(V1+D)/N*V2 - mu*V2"
+        },
+        {
+          "name": "depressed",
+          "expression": "dD/dt = alpha*V1 + beta*(1-p)*T - gamma*D - mu*D"
+        },
+        {
+          "name": "treatment",
+          "expression": "dT/dt = gamma*D - beta*(1-p)*T - beta*p*T - mu*T"
+        }
+      ],
+      "params": [
+        {
+          "name": "total_population",
+          "linear": true,
+          "symbol": "N",
+          "meaning": "Total population of women aged 15-24 in US (19,936,400)"
+        },
+        {
+          "name": "high_vulnerability_probability",
+          "linear": true,
+          "symbol": "q",
+          "meaning": "Probability of being highly vulnerable at age 15 (2/3)"
+        },
+        {
+          "name": "entry_exit_rate",
+          "linear": true,
+          "symbol": "mu",
+          "meaning": "Per capita entry/exit rate (1/(9*365) per day)"
+        },
+        {
+          "name": "peer_pressure_high_to_low",
+          "linear": false,
+          "symbol": "epsilon",
+          "meaning": "Peer pressure rate from high vulnerability and depressed to low vulnerability (0.5/day)"
+        },
+        {
+          "name": "peer_pressure_low_to_high",
+          "linear": false,
+          "symbol": "delta",
+          "meaning": "Peer pressure rate from low vulnerability to high vulnerability (0.2/day)"
+        },
+        {
+          "name": "media_influence_rate",
+          "linear": true,
+          "symbol": "alpha",
+          "meaning": "Rate media influence causes high vulnerability to become depressed (1/180 per day)"
+        },
+        {
+          "name": "treatment_seeking_rate",
+          "linear": true,
+          "symbol": "gamma",
+          "meaning": "Rate depressed women seek treatment ((1/3)*(1/270) per day)"
+        },
+        {
+          "name": "treatment_success_probability",
+          "linear": true,
+          "symbol": "p",
+          "meaning": "Probability treatment is successful (0.8)"
+        },
+        {
+          "name": "treatment_exit_rate",
+          "linear": true,
+          "symbol": "beta",
+          "meaning": "Rate women leave treatment (1/365 per day)"
+        },
+        {
+          "name": "basic_reproductive_number",
+          "linear": false,
+          "symbol": "R0",
+          "meaning": "R0 = sqrt((alpha*epsilon)/(gamma+mu) * (gamma*beta*(1-p))/((gamma+mu)*(beta+mu))) + (alpha*epsilon)/(delta+alpha+mu-epsilon) * 1/((gamma+mu)*(beta+mu))"
+        }
+      ]
+    }
+  ]
+}
