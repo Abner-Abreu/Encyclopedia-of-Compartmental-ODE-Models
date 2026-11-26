@@ -1,0 +1,178 @@
+{
+  "models": [
+    {
+      "name": "stoker_king_vampire_model",
+      "situation": {
+        "name": "vampire_human_stoker_king",
+        "description": "Stoker-King vampire model based on Bram Stoker's Dracula and Stephen King's Salem's Lot. Vampires turn humans into vampires through biting. No vampire slayers. Explosive vampire growth leads to human extinction."
+      },
+      "article": {
+        "name": "Mathematical Models of Interactions between Species: Peaceful Co-existence of Vampires and Humans Based on the Models Derived from Fiction Literature and Films",
+        "author": "Strielkowski, W., Lisin, E., Welkins, E.",
+        "date": "2013-01-01"
+      },
+      "data": {
+        "name": "stoker_king_simulation",
+        "place": "Numerical simulation with Runge-Kutta 4th order method",
+        "date": "2013-01-01",
+        "source": "Applied Mathematical Sciences, Vol. 7, 2013, no. 10, 453-470"
+      },
+      "compartments": [
+        {
+          "name": "humans",
+          "expression": "dx/dt = -a*x*y"
+        },
+        {
+          "name": "vampires",
+          "expression": "dy/dt = a*x*y"
+        }
+      ],
+      "params": [
+        {
+          "name": "lethal_interaction_coefficient",
+          "linear": false,
+          "symbol": "a",
+          "meaning": "Coefficient of lethal outcome for vampire-human interaction"
+        },
+        {
+          "name": "conversion_probability",
+          "linear": true,
+          "symbol": "b",
+          "meaning": "Probability of human turned into vampire (b=1)"
+        },
+        {
+          "name": "slayer_effectiveness",
+          "linear": true,
+          "symbol": "c",
+          "meaning": "Vampire slayer effectiveness (c=0, no slayers)"
+        },
+        {
+          "name": "human_growth_rate",
+          "linear": true,
+          "symbol": "k",
+          "meaning": "Human population growth rate (k=0, neglected)"
+        }
+      ]
+    },
+    {
+      "name": "rice_vampire_model",
+      "situation": {
+        "name": "vampire_human_rice",
+        "description": "Rice vampire model based on Anne Rice's Vampire Chronicles. Vampires feed discretely, rarely turn humans, don't need to feed daily. Low conversion probability, no slayers. Delays but does not prevent human extinction."
+      },
+      "article": {
+        "name": "Mathematical Models of Interactions between Species: Peaceful Co-existence of Vampires and Humans Based on the Models Derived from Fiction Literature and Films",
+        "author": "Strielkowski, W., Lisin, E., Welkins, E.",
+        "date": "2013-01-01"
+      },
+      "data": {
+        "name": "rice_simulation",
+        "place": "Numerical simulation with Runge-Kutta 4th order method",
+        "date": "2013-01-01",
+        "source": "Applied Mathematical Sciences, Vol. 7, 2013, no. 10, 453-470"
+      },
+      "compartments": [
+        {
+          "name": "humans",
+          "expression": "dx/dt = x*(k - a*y)"
+        },
+        {
+          "name": "vampires",
+          "expression": "dy/dt = b*a*x*y"
+        }
+      ],
+      "params": [
+        {
+          "name": "human_growth_rate",
+          "linear": true,
+          "symbol": "k",
+          "meaning": "Human population growth rate (calculated from historical data)"
+        },
+        {
+          "name": "lethal_interaction_coefficient",
+          "linear": false,
+          "symbol": "a",
+          "meaning": "Coefficient of lethal outcome (reduced to 0.1*a)"
+        },
+        {
+          "name": "conversion_probability",
+          "linear": true,
+          "symbol": "b",
+          "meaning": "Probability human turned into vampire (b=0.1)"
+        },
+        {
+          "name": "slayer_effectiveness",
+          "linear": true,
+          "symbol": "c",
+          "meaning": "Vampire slayer effectiveness (c=0, no slayers)"
+        }
+      ]
+    },
+    {
+      "name": "harris_meyer_kostova_vampire_model",
+      "situation": {
+        "name": "vampire_human_harris_meyer_kostova",
+        "description": "Harris-Meyer-Kostova vampire model based on True Blood, Twilight, and The Historian. Vampires coexist peacefully with humans, use synthetic blood, have organized vampire drainers. Allows stable coexistence with cyclical dynamics."
+      },
+      "article": {
+        "name": "Mathematical Models of Interactions between Species: Peaceful Co-existence of Vampires and Humans Based on the Models Derived from Fiction Literature and Films",
+        "author": "Strielkowski, W., Lisin, E., Welkins, E.",
+        "date": "2013-01-01"
+      },
+      "data": {
+        "name": "harris_meyer_kostova_simulation",
+        "place": "Numerical simulation with Runge-Kutta 4th order method",
+        "date": "2013-01-01",
+        "source": "Applied Mathematical Sciences, Vol. 7, 2013, no. 10, 453-470"
+      },
+      "compartments": [
+        {
+          "name": "humans",
+          "expression": "dx/dt = x*(k - a*y)"
+        },
+        {
+          "name": "vampires",
+          "expression": "dy/dt = y*(b*a*x - c)"
+        }
+      ],
+      "params": [
+        {
+          "name": "human_growth_rate",
+          "linear": true,
+          "symbol": "k",
+          "meaning": "Human population growth rate (calculated from 2001-2012 data)"
+        },
+        {
+          "name": "lethal_interaction_coefficient",
+          "linear": false,
+          "symbol": "a",
+          "meaning": "Coefficient of lethal outcome (reduced to 0.01*a)"
+        },
+        {
+          "name": "conversion_probability",
+          "linear": true,
+          "symbol": "b",
+          "meaning": "Probability human turned into vampire (b=0.1)"
+        },
+        {
+          "name": "slayer_drainer_effectiveness",
+          "linear": true,
+          "symbol": "c",
+          "meaning": "Vampire drainer effectiveness (c>0, calculated similar to k)"
+        },
+        {
+          "name": "stationary_human_population",
+          "linear": true,
+          "symbol": "xs",
+          "meaning": "Stationary human population xs = c/(b*a)"
+        },
+        {
+          "name": "stationary_vampire_population",
+          "linear": true,
+          "symbol": "ys",
+          "meaning": "Stationary vampire population ys = k/a"
+        }
+      ]
+    }
+  ]
+}
