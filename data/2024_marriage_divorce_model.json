@@ -1,0 +1,98 @@
+{
+  "models": [
+    {
+      "name": "marriage_divorce_social_model",
+      "situation": {
+        "name": "marriage_divorce_dynamics_fear_effect",
+        "description": "Social model for marriage and divorce relationships with fear effect and nonlinear incidence rate. The model describes population dynamics of single males, single females, and married individuals with logistic growth and fear factor affecting marriage rates."
+      },
+      "article": {
+        "name": "Dynamics of a Social Model for Marriage and Divorce Relationship",
+        "author": "Helal, M. M., et al.",
+        "date": "2024-01-01"
+      },
+      "data": {
+        "name": "marriage_divorce_simulation_data",
+        "place": "Matlab simulations with parameters from Table 2",
+        "date": "2024-01-01",
+        "source": "Malaysian Journal of Mathematical Sciences, 18(2): 267-286"
+      },
+      "compartments": [
+        {
+          "name": "single_males",
+          "expression": "dM/dt = r*M*(1 - M/K) - alpha1*M*F/(1 + n*G) + beta*G/2 - mu*M"
+        },
+        {
+          "name": "single_females",
+          "expression": "dF/dt = s*F*(1 - F/K) - alpha2*M*F/(1 + n*G) + beta*G/2 - mu*F"
+        },
+        {
+          "name": "married_individuals",
+          "expression": "dG/dt = alpha3*M*F/(1 + n*G) - beta*G - gamma*G"
+        }
+      ],
+      "params": [
+        {
+          "name": "male_growth_rate",
+          "linear": true,
+          "symbol": "r",
+          "meaning": "The growth rate of male population"
+        },
+        {
+          "name": "female_growth_rate",
+          "linear": true,
+          "symbol": "s",
+          "meaning": "The growth rate of female population"
+        },
+        {
+          "name": "marriage_failure_rate",
+          "linear": true,
+          "symbol": "beta",
+          "meaning": "The failure marriage rate (divorce rate)"
+        },
+        {
+          "name": "carrying_capacity",
+          "linear": true,
+          "symbol": "K",
+          "meaning": "The carrying capacity of the population"
+        },
+        {
+          "name": "fear_rate",
+          "linear": true,
+          "symbol": "n",
+          "meaning": "The fear rate from marriage (fear factor)"
+        },
+        {
+          "name": "male_marriage_rate",
+          "linear": false,
+          "symbol": "alpha1",
+          "meaning": "Marriage rate for males with alpha3 <= min(alpha1, alpha2)"
+        },
+        {
+          "name": "female_marriage_rate",
+          "linear": false,
+          "symbol": "alpha2",
+          "meaning": "Marriage rate for females with alpha3 <= min(alpha1, alpha2)"
+        },
+        {
+          "name": "general_marriage_rate",
+          "linear": false,
+          "symbol": "alpha3",
+          "meaning": "General marriage rate with alpha3 <= min(alpha1, alpha2)"
+        },
+        {
+          "name": "death_rate",
+          "linear": true,
+          "symbol": "mu",
+          "meaning": "The natural death rate"
+        },
+        {
+          "name": "decay_rate",
+          "linear": true,
+          "symbol": "gamma",
+          "meaning": "The decay rate of married individuals"
+        }
+      ]
+    }
+  ]
+}
