@@ -1,0 +1,230 @@
+{
+  "models": [
+    {
+      "name": "sir_feynman_diagrams_spread",
+      "situation": {
+        "name": "feynman_diagrams_adoption_sir",
+        "description": "SIR model for the spread of Feynman diagrams in physics communities. Susceptible physicists become adopters (infected) through contact, and eventually become recovered (no longer using the diagrams)."
+      },
+      "article": {
+        "name": "The power of a good idea: Quantitative modeling of the spread of ideas from epidemiological models",
+        "author": "Bettencourt, L.M.A., Cintron-Arias, A., Kaiser, D.I., Castillo-Chavez, C.",
+        "date": "2006-01-01"
+      },
+      "data": {
+        "name": "feynman_diagrams_adoption_data",
+        "place": "USA, Japan, USSR physics communities (1949-1959)",
+        "date": "2006-01-01",
+        "source": "Physica A 364 (2006) 513-536, Google search query data"
+      },
+      "compartments": [
+        {
+          "name": "susceptible_physicists",
+          "expression": "dS/dt = L - beta*S*I/N - m*S"
+        },
+        {
+          "name": "adopter_physicists",
+          "expression": "dI/dt = beta*S*I/N - g*I - m*I"
+        },
+        {
+          "name": "recovered_physicists",
+          "expression": "dR/dt = g*I - m*R"
+        }
+      ],
+      "params": [
+        {
+          "name": "recruitment_rate",
+          "linear": true,
+          "symbol": "L",
+          "meaning": "Recruitment rate of new physicists (people/year)"
+        },
+        {
+          "name": "infection_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Per-capita S-I contact rate (1/year)"
+        },
+        {
+          "name": "recovery_rate",
+          "linear": true,
+          "symbol": "g",
+          "meaning": "Recovery rate (1/year), inverse of average idea lifetime"
+        },
+        {
+          "name": "exit_rate",
+          "linear": true,
+          "symbol": "m",
+          "meaning": "Exit rate from population (1/year), inverse of average career lifetime"
+        },
+        {
+          "name": "basic_reproductive_number",
+          "linear": false,
+          "symbol": "R0",
+          "meaning": "Basic reproductive number R0 = beta/(g+m)"
+        }
+      ]
+    },
+    {
+      "name": "sei_feynman_diagrams_spread",
+      "situation": {
+        "name": "feynman_diagrams_adoption_sei",
+        "description": "SEI model for the spread of Feynman diagrams with incubation period. Susceptible physicists first become exposed (incubators) before becoming adopters."
+      },
+      "article": {
+        "name": "The power of a good idea: Quantitative modeling of the spread of ideas from epidemiological models",
+        "author": "Bettencourt, L.M.A., Cintron-Arias, A., Kaiser, D.I., Castillo-Chavez, C.",
+        "date": "2006-01-01"
+      },
+      "data": {
+        "name": "feynman_diagrams_adoption_data",
+        "place": "USA, Japan, USSR physics communities (1949-1959)",
+        "date": "2006-01-01",
+        "source": "Physica A 364 (2006) 513-536, Google search query data"
+      },
+      "compartments": [
+        {
+          "name": "susceptible_physicists",
+          "expression": "dS/dt = L - beta*S*I/N - m*S"
+        },
+        {
+          "name": "exposed_physicists",
+          "expression": "dE/dt = beta*S*I/N - sigma*E - m*E"
+        },
+        {
+          "name": "adopter_physicists",
+          "expression": "dI/dt = sigma*E - m*I"
+        }
+      ],
+      "params": [
+        {
+          "name": "recruitment_rate",
+          "linear": true,
+          "symbol": "L",
+          "meaning": "Recruitment rate of new physicists (people/year)"
+        },
+        {
+          "name": "infection_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Per-capita S-I contact rate (1/year)"
+        },
+        {
+          "name": "incubation_rate",
+          "linear": true,
+          "symbol": "sigma",
+          "meaning": "Incubation rate (1/year), inverse of average incubation time"
+        },
+        {
+          "name": "exit_rate",
+          "linear": true,
+          "symbol": "m",
+          "meaning": "Exit rate from population (1/year)"
+        },
+        {
+          "name": "basic_reproductive_number",
+          "linear": false,
+          "symbol": "R0",
+          "meaning": "Basic reproductive number R0 = beta*sigma/(m*(sigma+m))"
+        }
+      ]
+    },
+    {
+      "name": "seiz_feynman_diagrams_spread",
+      "situation": {
+        "name": "feynman_diagrams_adoption_seiz",
+        "description": "SEIZ model for the spread of Feynman diagrams with incubation and competing skeptics. Includes incubator class and skeptic class that competes for susceptibles."
+      },
+      "article": {
+        "name": "The power of a good idea: Quantitative modeling of the spread of ideas from epidemiological models",
+        "author": "Bettencourt, L.M.A., Cintron-Arias, A., Kaiser, D.I., Castillo-Chavez, C.",
+        "date": "2006-01-01"
+      },
+      "data": {
+        "name": "feynman_diagrams_adoption_data",
+        "place": "USA, Japan, USSR physics communities (1949-1959)",
+        "date": "2006-01-01",
+        "source": "Physica A 364 (2006) 513-536, Google search query data"
+      },
+      "compartments": [
+        {
+          "name": "susceptible_physicists",
+          "expression": "dS/dt = L - beta*S*I/N - beta_z*S*Z/N - m*S"
+        },
+        {
+          "name": "exposed_physicists",
+          "expression": "dE/dt = (1-p)*beta*S*I/N + (1-l)*beta_z*S*Z/N - r*E*I/N - sigma*E - m*E"
+        },
+        {
+          "name": "adopter_physicists",
+          "expression": "dI/dt = p*beta*S*I/N + r*E*I/N + sigma*E - m*I"
+        },
+        {
+          "name": "skeptic_physicists",
+          "expression": "dZ/dt = l*beta_z*S*Z/N - m*Z"
+        }
+      ],
+      "params": [
+        {
+          "name": "recruitment_rate",
+          "linear": true,
+          "symbol": "L",
+          "meaning": "Recruitment rate of new physicists (people/year)"
+        },
+        {
+          "name": "adoption_contact_rate",
+          "linear": false,
+          "symbol": "beta",
+          "meaning": "Per-capita S-I contact rate for adoption (1/year)"
+        },
+        {
+          "name": "skeptic_contact_rate",
+          "linear": false,
+          "symbol": "beta_z",
+          "meaning": "Per-capita S-Z contact rate for skepticism (1/year)"
+        },
+        {
+          "name": "incubation_rate",
+          "linear": true,
+          "symbol": "sigma",
+          "meaning": "Incubation rate (1/year)"
+        },
+        {
+          "name": "exit_rate",
+          "linear": true,
+          "symbol": "m",
+          "meaning": "Exit rate from population (1/year)"
+        },
+        {
+          "name": "adoption_probability",
+          "linear": true,
+          "symbol": "p",
+          "meaning": "Probability of immediate adoption upon contact with adopter"
+        },
+        {
+          "name": "skeptic_conversion_probability",
+          "linear": true,
+          "symbol": "l",
+          "meaning": "Probability of becoming skeptic upon contact with skeptic"
+        },
+        {
+          "name": "incubator_contact_rate",
+          "linear": false,
+          "symbol": "r",
+          "meaning": "Rate of adoption promotion through contact with adopters while incubating (1/year)"
+        },
+        {
+          "name": "basic_reproductive_number_adopters",
+          "linear": false,
+          "symbol": "RI0",
+          "meaning": "Basic reproductive number for adopters RI0 = beta*(sigma+p*m)/(m*(sigma+m))"
+        },
+        {
+          "name": "basic_reproductive_number_skeptics",
+          "linear": false,
+          "symbol": "RZ0",
+          "meaning": "Basic reproductive number for skeptics RZ0 = beta_z/m"
+        }
+      ]
+    }
+  ]
+}
